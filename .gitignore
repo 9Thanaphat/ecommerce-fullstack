@@ -1,0 +1,12 @@
+# ----------------------------------
+# Custom for Elysia & Docker Project
+# ----------------------------------
+
+.env
+node_modules/
+
+# ป้องกันไฟล์ Database ของ Docker 
+postgres_data/
+
+# ป้องกันไฟล์ประวัติการสร้างตารางของ Drizzle 
+drizzle/
