@@ -27,4 +27,6 @@ jobs:
         run: bun install
 
       - name: Check Build and Run
+        env:
+          JWT_SECRET: "dummy_secret_for_ci_testing_only"
         run: bun run src/index.ts & sleep 3 && kill $!
