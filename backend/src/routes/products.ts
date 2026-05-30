@@ -2,11 +2,11 @@ import { Elysia, t } from "elysia";
 import { products } from "../db/schema";
 import { db } from "../db";
 
-export const productRoutes = new Elysia({prefix: "/products"})
+export const productRoutes = new Elysia({ prefix: "/products" })
   .get("/", async () => {
-    try{
+    try {
       // Drizzle ORM query to fetch all products from the database
-      const allProducts = await db.select().from(products); 
+      const allProducts = await db.select().from(products);
       return allProducts; //Elysia will automatically serialize this to JSON
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -31,7 +31,7 @@ export const productRoutes = new Elysia({prefix: "/products"})
           stock: body.stock,
           createdAt: new Date(),
         })
-        .returning(); 
+        .returning();
 
       return {
         message: "Product added successfully!",
@@ -47,6 +47,5 @@ export const productRoutes = new Elysia({prefix: "/products"})
         stock: t.Number(),
         price: t.Number(),
       }),
-    }
-  )
-;
+    },
+  );

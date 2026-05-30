@@ -1,5 +1,5 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
-import Login from './pages/Login'
+import Auth from './pages/Auth'
 import NotFound from './pages/NotFound'
 import Product from './pages/Product'
 import Home from './pages/Home'
@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Product />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

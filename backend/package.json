@@ -10,9 +10,12 @@
     "@elysiajs/jwt": "^1.4.2",
     "drizzle-orm": "^0.45.2",
     "elysia": "latest",
-    "postgres": "^3.4.9"
+    "nodemailer": "^8.0.10",
+    "postgres": "^3.4.9",
+    "resend": "^6.12.4"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.0",
     "bun-types": "latest",
     "drizzle-kit": "^0.31.10"
   },

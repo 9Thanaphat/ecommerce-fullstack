@@ -1,16 +1,12 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
-import { otps, users } from "../db/schema";
+import { users } from "../db/schema";
 import { db } from "../db";
 import { registerUser, resendOtp, verifyOtp } from "../controller/register";
 import { loginUser } from "../controller/login";
 
-if (!Bun.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined in environment variables");
-}
-
 export const userRoutes = new Elysia({ prefix: "/users" })
-    .use(jwt({ name: "jwt", secret: Bun.env.JWT_SECRET! }))
+  .use(jwt({ name: "jwt", secret: Bun.env.JWT_SECRET! }))
   .get("/", async () => {
     try {
       const allUsers = await db.select().from(users);
@@ -64,8 +60,21 @@ export const userRoutes = new Elysia({ prefix: "/users" })
 
   .post(
     "/login",
-    async ({ body, jwt }) => {
-      return await loginUser(body, jwt);
+    async ({ body, jwt, cookie: { auth_token } }) => {
+      const result = await loginUser(body, jwt);
+      if (result.token) {
+        auth_token.set({
+          value: result.token,
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+        });
+      }
+      return {
+        message: result.message,
+        success: result.success,
+      };
     },
     {
       body: t.Object({

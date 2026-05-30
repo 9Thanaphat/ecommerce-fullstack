@@ -2,10 +2,20 @@ import { Elysia, t } from "elysia";
 import { otps, users } from "../db/schema";
 import { db } from "../db";
 import { eq, and } from "drizzle-orm";
+import nodemailer from "nodemailer";
+
+// Configure nodemailer transporter for Gmail
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 type RegisterBody = {
   email: string;
-  password: string; 
+  password: string;
 };
 
 type VerifyOtpBody = {
@@ -15,7 +25,7 @@ type VerifyOtpBody = {
 
 type ResendOtpBody = {
   email: string;
-};  
+};
 
 export const registerUser = async (body: RegisterBody) => {
   try {
@@ -25,22 +35,28 @@ export const registerUser = async (body: RegisterBody) => {
       .where(eq(users.email, body.email));
 
     if (existingUser.length > 0) {
-      return {
-        success: false,
-        message: "Email already registered",
-      };
-    }
-
-    // Hash the password using Bun's built-in hashing function
-    const hashedPassword = await Bun.password.hash(body.password!);
-
-    const newUser = await db
-      .insert(users)
-      .values({
+      // case 1: user exists and is verified, return error
+      if (existingUser[0].isVerified) {
+        return {
+          success: false,
+          message: "Email already registered and verified",
+        };
+      }
+      // case 2: user exists but not verified, update password and resend OTP
+      const hashedPassword = await Bun.password.hash(body.password!);
+      await db
+        .update(users)
+        .set({ passwordHash: hashedPassword })
+        .where(eq(users.email, body.email));
+    } else {
+      // case 3: user does not exist, create new user
+      const hashedPassword = await Bun.password.hash(body.password!);
+      await db.insert(users).values({
         email: body.email,
         passwordHash: hashedPassword,
-      })
-      .returning();
+        isVerified: false,
+      });
+    }
 
     // Generate OTP code
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -59,9 +75,25 @@ export const registerUser = async (body: RegisterBody) => {
       expiresAt: expireTime,
     });
 
-    // test
-    console.log(`\n📧 [SYSTEM] กำลังส่งอีเมลไปที่: ${body.email}`);
-    console.log(`🔑 [SYSTEM] รหัส OTP ของคุณคือ: ${otpCode}\n`);
+    // Send OTP email to the user
+    const mailOptions = {
+      from: `"Ecommerce" <${process.env.GMAIL_USER}>`,
+      to: body.email,
+      subject: "Your OTP Verification Code",
+      html: `
+          <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
+            <h2 style="color: #000;">Welcome!</h2>
+            <p>Your One-Time Password (OTP) for login is:</p>
+            <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+              <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
+            </div>
+            <p style="color: #666; font-size: 14px;">This code is valid for the next 5 minutes. Please do not share this code with anyone.</p>
+          </div>
+        `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Message sent: %s", info.messageId);
 
     return {
       success: true,
@@ -153,9 +185,25 @@ export const resendOtp = async (body: ResendOtpBody) => {
       expiresAt: expireTime,
     });
 
-    // test
-    console.log(`\n📧 [SYSTEM] กำลังส่งอีเมลไปที่: ${body.email}`);
-    console.log(`🔑 [SYSTEM] รหัส OTP ใหม่ของคุณคือ: ${otpCode}\n`);
+    // Send OTP email to the user
+    const mailOptions = {
+      from: `"Ecommerce" <${process.env.GMAIL_USER}>`,
+      to: body.email,
+      subject: "Your OTP Verification Code",
+      html: `
+          <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
+            <h2 style="color: #000;">Welcome!</h2>
+            <p>Your One-Time Password (OTP) for login is:</p>
+            <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+              <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
+            </div>
+            <p style="color: #666; font-size: 14px;">This code is valid for the next 5 minutes. Please do not share this code with anyone.</p>
+          </div>
+        `,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Message sent: %s", info.messageId);
 
     return {
       success: true,
