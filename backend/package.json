@@ -12,7 +12,8 @@
     "elysia": "latest",
     "nodemailer": "^8.0.10",
     "postgres": "^3.4.9",
-    "resend": "^6.12.4"
+    "resend": "^6.12.4",
+    "sweetalert2": "^11.26.25"
   },
   "devDependencies": {
     "@types/nodemailer": "^8.0.0",

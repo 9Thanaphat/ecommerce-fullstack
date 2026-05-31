@@ -4,8 +4,19 @@ import { users } from "../db/schema";
 import { db } from "../db";
 import { registerUser, resendOtp, verifyOtp } from "../controller/register";
 import { loginUser } from "../controller/login";
+import { cors } from "@elysiajs/cors";
+
+const frontendUrl = Bun.env.FRONTEND_URL;
 
 export const userRoutes = new Elysia({ prefix: "/users" })
+  .use(
+    cors({
+      origin: frontendUrl,
+      // allowCredentials: true, // If you need to send cookies or authentication headers
+      credentials: true,
+    }),
+  )
+
   .use(jwt({ name: "jwt", secret: Bun.env.JWT_SECRET! }))
   .get("/", async () => {
     try {
@@ -63,13 +74,16 @@ export const userRoutes = new Elysia({ prefix: "/users" })
     async ({ body, jwt, cookie: { auth_token } }) => {
       const result = await loginUser(body, jwt);
       if (result.token) {
-        auth_token.set({
+        const cookieOptions: any = {
           value: result.token,
           httpOnly: true,
           secure: true,
           sameSite: "strict",
-          maxAge: 60 * 60 * 24 * 7, // 7 days
-        });
+        };
+        if (body.isRemember) {
+          cookieOptions.maxAge = 7 * 24 * 60 * 60; // 7 days
+        }
+        auth_token.set(cookieOptions);
       }
       return {
         message: result.message,
@@ -80,6 +94,25 @@ export const userRoutes = new Elysia({ prefix: "/users" })
       body: t.Object({
         email: t.String({ format: "email" }),
         password: t.String(),
+        isRemember: t.Boolean(),
       }),
     },
-  );
+  )
+
+  .get("/check-auth", async ({ jwt, cookie: { auth_token } }) => {
+    if (!auth_token.value) {
+      return {
+        authenticated: false,
+        message: "No authentication token provided",
+      };
+    }
+    const profile = await jwt.verify(auth_token.value as string);
+    if (!profile) {
+      return { success: false, message: "Token is invalid or expired" };
+    }
+
+    return {
+      authenticated: true,
+      user: profile,
+    };
+  });

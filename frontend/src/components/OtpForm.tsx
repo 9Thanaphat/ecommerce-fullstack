@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 interface OtpFormProps {
   email: string;
@@ -33,7 +34,7 @@ export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
       const data = await response.json();
       if (response.ok && data.success) {
         // OTP verified successfully, you can redirect the user or show a success message
-        alert("OTP verified successfully! You can now log in.");
+        Swal.fire("Success", "OTP verified successfully! You can now log in.", "success");
         onSwitchToLogin();
       } else {
         setError(data.message || "OTP verification failed");
@@ -60,7 +61,7 @@ export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
       });
       const data = await response.json();
       if (response.ok && data.success) {
-        alert("OTP resent successfully! Please check your email.");
+        Swal.fire("Success", "OTP resent successfully! Please check your email.", "success");
       } else {
         setError(data.message || "Failed to resend OTP");
       }
