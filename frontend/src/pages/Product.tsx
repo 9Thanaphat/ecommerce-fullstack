@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../App.css";
+import NavBar from "../components/NavBar";
 
 // Define the Product interface to match the backend schema
 interface Product {
@@ -42,8 +43,9 @@ export default function Products() {
     return <div className="p-8">Loading products...</div>;
   }
   return (
-    <div className="pl-32 pr-32 p-8 bg-zinc-100 min-h-screen">
-      <div className="text-black grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="">
+      <NavBar />
+      {/* <div className="text-black grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <div key={product.id} className="border rounded-lg p-4 bg-white shadow-md">
             <h2 className="text-xl text-gray-800 font-bold">{product.name}</h2>
@@ -52,7 +54,7 @@ export default function Products() {
             <p className="text-sm text-gray-500">Stock: {product.stock}</p>
           </div>
         ))} 
-      </div>
+      </div> */}
     </div>
   );
 }

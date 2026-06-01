@@ -10,7 +10,6 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(
     cors({
       origin: frontendUrl,
-      // allowCredentials: true, // If you need to send cookies or authentication headers
       credentials: true,
     }),
   )
