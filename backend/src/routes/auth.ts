@@ -1,14 +1,12 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
-import { users } from "../db/schema";
-import { db } from "../db";
 import { registerUser, resendOtp, verifyOtp } from "../controller/register";
 import { loginUser } from "../controller/login";
 import { cors } from "@elysiajs/cors";
 
 const frontendUrl = Bun.env.FRONTEND_URL;
 
-export const userRoutes = new Elysia({ prefix: "/users" })
+export const authRoutes = new Elysia({ prefix: "/auth" })
   .use(
     cors({
       origin: frontendUrl,
@@ -18,18 +16,6 @@ export const userRoutes = new Elysia({ prefix: "/users" })
   )
 
   .use(jwt({ name: "jwt", secret: Bun.env.JWT_SECRET! }))
-  .get("/", async () => {
-    try {
-      const allUsers = await db.select().from(users);
-      return allUsers;
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      return {
-        message: "Failed to fetch users",
-        data: [],
-      };
-    }
-  })
 
   .post(
     "/register",

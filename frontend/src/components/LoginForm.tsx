@@ -28,7 +28,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     setIsSubmitting(true);
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/users/login`, {
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
