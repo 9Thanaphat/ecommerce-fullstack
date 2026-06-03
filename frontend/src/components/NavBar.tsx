@@ -12,7 +12,7 @@ export default function NavBar() {
         </ul>
       </div>
       <input
-        className="bg-gray-200 rounded-lg flex-1 px-4 py-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="bg-gray-100 rounded-lg flex-1 px-4 py-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Search..."
       />
       <div className="flex items-center ml-auto min-w-fit gap-6">

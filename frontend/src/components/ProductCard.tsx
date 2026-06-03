@@ -17,13 +17,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       <img
         src={product.imageUrl || undefined}
         alt={product.name}
-        className="w-48 h-48 object-cover rounded-lg"
+        className="w-48 h-48 bg-gray-100 object-cover rounded-lg"
       />
       <div className="mr-auto text-xl text-gray-800 font-bold text-center">
         {product.name}
       </div>{" "}
       <div className="mr-auto text-green-600 font-semibold">
-        ${product.price.toFixed(2)}
+        ${product.price}
       </div>
     </div>
   );

@@ -10,3 +10,9 @@ postgres_data/
 
 # ป้องกันไฟล์ประวัติการสร้างตารางของ Drizzle 
 drizzle/
+
+# AI Tools & Agent Skills
+.github/skills/
+.impeccable/
+.agents/
+.gemini/
