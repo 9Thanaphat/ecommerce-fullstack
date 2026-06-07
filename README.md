@@ -200,7 +200,3 @@ Design principles are documented in [DESIGN.md](./DESIGN.md). Product and brand 
 - **Design system before components** — defining tokens first makes component styling consistent and refactoring much easier
 
 ---
-
-## License
-
-MIT
