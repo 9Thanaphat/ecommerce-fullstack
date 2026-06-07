@@ -92,6 +92,13 @@ export default function AdminLayout() {
       <div className="admin-main">
         {/* Top bar */}
         <header className="admin-topbar">
+          <button
+            className="btn btn-ghost btn-icon"
+            aria-label="Toggle navigation"
+            onClick={() => setSidebarOpen((v) => !v)}
+          >
+            {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
 
           <span
             style={{

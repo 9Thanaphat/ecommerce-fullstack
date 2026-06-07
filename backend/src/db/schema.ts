@@ -1,11 +1,16 @@
 import {
+  InferSelectModel,
+  InferInsertModel
+} from "drizzle-orm";
+
+import {
   pgTable,
   serial,
   text,
   integer,
   boolean,
   timestamp,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -20,6 +25,10 @@ export const products = pgTable("products", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+export type Product = InferSelectModel<typeof products>;
+
+export type InsertProduct = InferInsertModel<typeof products>;
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
