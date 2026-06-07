@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
-import { registerUser, resendOtp, verifyOtp } from "../controller/register";
-import { loginUser } from "../controller/login";
+import { registerUser, resendOtp, verifyOtp } from "../controller/registerController";
+import { loginUser } from "../controller/loginController";
 import { cors } from "@elysiajs/cors";
 
 const frontendUrl = Bun.env.FRONTEND_URL;
@@ -10,7 +10,6 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
   .use(
     cors({
       origin: frontendUrl,
-      // allowCredentials: true, // If you need to send cookies or authentication headers
       credentials: true,
     }),
   )

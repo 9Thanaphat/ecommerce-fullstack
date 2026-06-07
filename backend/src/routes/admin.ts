@@ -3,29 +3,46 @@ import { jwt } from "@elysiajs/jwt";
 import { users } from "../db/schema";
 import { db } from "../db";
 import { cors } from "@elysiajs/cors";
+import { addProduct, updateProduct, deleteProduct } from "../controller/productController";
 
 const frontendUrl = Bun.env.FRONTEND_URL;
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
-  .use(
-    cors({
-      origin: frontendUrl,
-      credentials: true,
-    }),
-  )
+  // .use(
+  //   cors({
+  //     origin: frontendUrl,
+  //     credentials: true,
+  //   }),
+  // )
 
-  .group("products", (adminRoutes) =>
-    adminRoutes
-      .post("/", async ({ body }) => {
-        // Implement logic to add a product
-        return { message: "Product added successfully" };
+  .group("/products", (group) =>
+    group
+      .post("/", addProduct, {
+        body: t.Object({
+          name: t.String(),
+          description: t.String(),
+          price: t.Integer(),
+          imageUrl: t.String(),
+          stock: t.Integer(),
+        }),
       })
-      .put("/:id", async ({ params, body }) => {
-        // Implement logic to update a product by ID
-        return { message: `Product with ID ${params.id} updated successfully` };
+      .put("/:id", updateProduct, {
+        params: t.Object({
+          id: t.Numeric(),
+        }),
+        body: t.Partial(
+          t.Object({
+            name: t.String(),
+            description: t.String(),
+            price: t.Integer(),
+            imageUrl: t.String(),
+            stock: t.Integer(),
+          })
+        ),
       })
-      .delete("/:id", async ({ params }) => {
-        // Implement logic to delete a product by ID
-        return { message: `Product with ID ${params.id} deleted successfully` };
-      }),
+      .delete("/:id", deleteProduct, {
+        params: t.Object({
+          id: t.Numeric(),
+        }),
+      })
   );
