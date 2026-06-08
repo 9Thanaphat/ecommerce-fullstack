@@ -4,7 +4,11 @@ import ProductCard from "./ProductCard";
 
 import { mockProducts, type Product } from "../mockProduct";
 
-export default function ProductGrid() {
+interface ProductGridProps {
+  search: string;
+}
+
+export default function ProductGrid({search}: ProductGridProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,13 +43,22 @@ export default function ProductGrid() {
     return <div className="p-8">Loading products...</div>;
   }
 
+  const filteredProducts = products.filter((product) => {
+    return product?.name?.toLowerCase().includes(search.toLowerCase());
+  });
+
   return (
     <div className="p-4 bg-white w-full min-h-screen border-2 border-gray-200 rounded-lg ">
-      <div className="grid grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      
+        {filteredProducts.length === 0 ? (
+          <div className="p-8">No products found</div>
+        ) : (
+          <div className="grid grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
-    </div>
   );
 }
