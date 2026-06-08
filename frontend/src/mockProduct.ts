@@ -50,43 +50,43 @@ export const mockProducts: Product[] = [
   },
   {
     id: 6,
-    name: "Thick-Sole Derby Shoes",
-    price: 4500.00,
-    description: "Classic black leather derby shoes with a modern thick sole.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Derby+Shoes",
-    stock: 8
+    name: "Portable NVMe SSD 1TB",
+    price: 3890.00,
+    description: "Ultra-fast external storage with USB 3.2 Gen 2 interface.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Portable+SSD",
+    stock: 25
   },
   {
     id: 7,
-    name: "M42 to E-Mount Adapter",
-    price: 850.00,
-    description: "Matte black adapter for vintage M42 lenses.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Lens+Adapter",
-    stock: 50
+    name: "USB-C Hub 8-in-1",
+    price: 1450.00,
+    description: "Aluminum multiport adapter with HDMI 4K and Ethernet.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=USB-C+Hub",
+    stock: 40
   },
   {
     id: 8,
-    name: "Vintage 50mm f/1.4 Lens",
-    price: 3200.00,
-    description: "Manual focus film camera lens with beautiful bokeh.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Vintage+Lens",
-    stock: 3
-  },
-  {
-    id: 9,
-    name: "Silver Mountain Water",
-    price: 9500.00,
-    description: "Quiet luxury fragrance with crisp, icy notes.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Fragrance",
+    name: "Dual Monitor Desk Mount",
+    price: 1990.00,
+    description: "Heavy-duty gas spring arm for 17-32 inch screens.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Monitor+Mount",
     stock: 12
   },
   {
+    id: 9,
+    name: "4K Ultra HD Webcam",
+    price: 4500.00,
+    description: "Pro webcam with auto-focus and dual noise-canceling mics.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=4K+Webcam",
+    stock: 18
+  },
+  {
     id: 10,
-    name: "Colonia Essenza",
-    price: 6200.00,
-    description: "Classic Italian citrus scent in a signature black bottle.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Cologne",
-    stock: 15
+    name: "GaN Fast Charger 100W",
+    price: 1690.00,
+    description: "Compact 4-port wall charger for laptops and smartphones.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=GaN+Charger",
+    stock: 35
   },
   {
     id: 11,
@@ -98,11 +98,11 @@ export const mockProducts: Product[] = [
   },
   {
     id: 12,
-    name: "Minimalist Black T-Shirt",
-    price: 900.00,
-    description: "Premium cotton oversized fit.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Black+Tee",
-    stock: 100
+    name: "RGB Laptop Cooling Pad",
+    price: 950.00,
+    description: "High-performance quiet fans with adjustable height.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Laptop+Cooler",
+    stock: 50
   },
   {
     id: 13,
@@ -114,11 +114,11 @@ export const mockProducts: Product[] = [
   },
   {
     id: 14,
-    name: "Leather Camera Strap",
-    price: 1500.00,
-    description: "Handcrafted black leather strap for mirrorless cameras.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Camera+Strap",
-    stock: 22
+    name: "Stream Deck Controller",
+    price: 5900.00,
+    description: "15 customizable LCD keys for studio and workflow automation.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Stream+Deck",
+    stock: 8
   },
   {
     id: 15,
@@ -130,10 +130,10 @@ export const mockProducts: Product[] = [
   },
   {
     id: 16,
-    name: "Samurai Clan Art Print",
-    price: 1200.00,
-    description: "Dark-themed canvas print of historical crests.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Art+Print",
-    stock: 10
+    name: "Wi-Fi 6E Mesh Router",
+    price: 4800.00,
+    description: "Tri-band gigabit wireless router for seamless home coverage.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Mesh+Router",
+    stock: 14
   }
 ];
