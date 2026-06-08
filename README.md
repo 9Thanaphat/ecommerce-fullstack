@@ -176,27 +176,3 @@ bun run dev
 Frontend runs at `http://localhost:5173`
 
 ---
-
-## Design System
-
-The UI is built around a custom design system defined in `frontend/src/index.css`. Colors use OKLCH for perceptual uniformity.
-
-```css
---color-bg:      oklch(0.08 0.000 0);   /* near-pure black — the void */
---color-primary: oklch(0.418 0.155 27.2); /* oxidized crimson */
---color-ink:     oklch(0.94 0.005 27);  /* near-white */
-```
-
-Design principles are documented in [DESIGN.md](./DESIGN.md). Product and brand decisions are in [PRODUCT.md](./PRODUCT.md).
-
----
-
-## What I Learned
-
-- **Bun + ElysiaJS** — significantly faster cold starts than Node.js/Express; Elysia's plugin system (JWT, CORS) and built-in `t.Object` validation reduces boilerplate
-- **Drizzle ORM** — type-safe queries without magic; schema-first approach makes DB changes explicit
-- **HttpOnly JWT cookies** — better XSS protection compared to localStorage; `sameSite: strict` + `secure` for CSRF mitigation
-- **OKLCH color space** — perceptually uniform, easier to reason about contrast ratios than HSL/hex
-- **Design system before components** — defining tokens first makes component styling consistent and refactoring much easier
-
----
