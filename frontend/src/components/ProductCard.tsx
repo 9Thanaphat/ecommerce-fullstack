@@ -1,29 +1,62 @@
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  description: string | null;
-  imageUrl: string | null;
-  stock: number;
-}
+import { ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
+import type { Product } from "../mockProduct";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const inStock = product.stock > 0;
+
   return (
-    <div className="border-gray-200 border-2 rounded-lg p-4 bg-white shadow-md flex flex-col items-center rounded-lg">
-      <img
-        src={product.imageUrl || undefined}
-        alt={product.name}
-        className="w-48 h-48 bg-gray-100 object-cover rounded-lg"
-      />
-      <div className="mr-auto text-xl text-gray-800 font-bold text-center">
-        {product.name}
-      </div>{" "}
-      <div className="mr-auto text-green-600 font-semibold">
-        ${product.price}
+    <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+
+      {/* Image — click to detail */}
+      <Link to={`/products/${product.id}`} className="relative bg-gray-50 aspect-square overflow-hidden block">
+        <img
+          src={product.imageUrl || undefined}
+          alt={product.name}
+          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+        />
+        <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-white text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full">
+          {product.category}
+        </span>
+      </Link>
+
+      {/* Body */}
+      <div className="p-4 flex flex-col gap-3">
+        <Link
+          to={`/products/${product.id}`}
+          className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-gray-600 transition-colors"
+        >
+          {product.name}
+        </Link>
+
+        {product.description && (
+          <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
+            {product.description}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between mt-auto pt-1">
+          <div>
+            <span className="text-base font-bold text-gray-900">
+              ฿{product.price.toLocaleString()}
+            </span>
+            <p className={`text-[10px] mt-0.5 ${inStock ? "text-green-500" : "text-red-400"}`}>
+              {inStock ? `In stock (${product.stock})` : "Out of stock"}
+            </p>
+          </div>
+          <button
+            disabled={!inStock}
+            className="flex items-center gap-1.5 text-xs font-medium bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label="Add to cart"
+          >
+            <ShoppingCart size={13} />
+            Add
+          </button>
+        </div>
       </div>
     </div>
   );
