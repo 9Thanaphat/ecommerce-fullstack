@@ -1,136 +1,139 @@
-export type ProductCategory =
-  | "CPU"
-  | "Mainboard"
-  | "RAM"
-  | "GPU"
-  | "SSD"
-  | "HDD"
-  | "PSU"
-  | "Case"
-  | "CPU Cooler";
-
-export type ProductAttributes =
-  | { componentType: "CPU"; socket: string; cores: number; threads: number; baseClock: number; boostClock: number; tdp: number; integratedGraphics: boolean }
-  | { componentType: "Mainboard"; socket: string; chipset: string; formFactor: "ATX" | "Micro-ATX" | "Mini-ITX" | "E-ATX"; memoryType: "DDR4" | "DDR5"; ramSlots: number; hasWifi: boolean }
-  | { componentType: "RAM"; memoryType: "DDR4" | "DDR5"; capacity: number; modules: number; speed: number; casLatency: number }
-  | { componentType: "GPU"; chipset: string; vram: number; length: number; recommendedPsu: number }
-  | { componentType: "SSD"; formFactor: "M.2 2280" | "2.5 inch" | "PCIe Add-in Card"; interface: "PCIe 5.0 x4" | "PCIe 4.0 x4" | "PCIe 3.0 x4" | "SATA III"; capacity: number; readSpeed: number; writeSpeed: number }
-  | { componentType: "HDD"; formFactor: "3.5 inch" | "2.5 inch"; interface: "SATA III"; capacity: number; rpm: 5400 | 7200; cache: number }
-  | { componentType: "PSU"; wattage: number; efficiency: "80+ Titanium" | "80+ Platinum" | "80+ Gold" | "80+ Bronze" | "80+ Standard"; modularity: "Full" | "Semi" | "Non"; formFactor: "ATX" | "SFX" | "SFX-L" }
-  | { componentType: "Case"; formFactor: "Full Tower" | "Mid Tower" | "Mini ITX"; motherboardSupport: string[]; maxGpuLength: number; maxCpuCoolerHeight: number }
-  | { componentType: "CPU Cooler"; type: "Air Cooler" | "Liquid Cooler"; socketSupport: string[]; height?: number; radiatorSize?: 120 | 240 | 280 | 360 | 420 }
-  | Record<string, unknown>;
-
 export interface Product {
   id: number;
   name: string;
-  category: ProductCategory;
   price: number;
   description: string | null;
   imageUrl: string | null;
   stock: number;
-  attributes: ProductAttributes;
 }
 
 export const mockProducts: Product[] = [
   {
     id: 1,
-    name: "Intel Core i9-14900K",
-    category: "CPU",
-    price: 18900,
-    description: "Flagship desktop processor with 24 cores.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=i9-14900K",
-    stock: 15,
-    attributes: { componentType: "CPU", socket: "LGA1700", cores: 24, threads: 32, baseClock: 3.2, boostClock: 6.0, tdp: 125, integratedGraphics: true },
+    name: "Mechanical Keyboard",
+    price: 3500.00,
+    description: "Minimalist all-black layout.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Keyboard+V1",
+    stock: 15
   },
   {
     id: 2,
-    name: "AMD Ryzen 9 7950X",
-    category: "CPU",
-    price: 21500,
-    description: "16-core powerhouse for workstations.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Ryzen+9+7950X",
-    stock: 8,
-    attributes: { componentType: "CPU", socket: "AM5", cores: 16, threads: 32, baseClock: 4.5, boostClock: 5.7, tdp: 170, integratedGraphics: false },
+    name: "Mechanical Keyboard V2",
+    price: 4200.00,
+    description: "Upgraded version with linear switches.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Keyboard+V2",
+    stock: 5
   },
   {
     id: 3,
-    name: "ASUS ROG Strix Z790-E",
-    category: "Mainboard",
-    price: 15900,
-    description: "High-end Z790 motherboard with Wi-Fi 6E.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=ROG+Z790",
-    stock: 12,
-    attributes: { componentType: "Mainboard", socket: "LGA1700", chipset: "Z790", formFactor: "ATX", memoryType: "DDR5", ramSlots: 4, hasWifi: true },
+    name: "Mechanical Keyboard V3",
+    price: 1200.00,
+    description: "Compact 60% layout.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Keyboard+V3",
+    stock: 20
   },
   {
     id: 4,
-    name: "G.Skill Trident Z5 32GB DDR5",
-    category: "RAM",
-    price: 5200,
-    description: "High-speed DDR5 kit for next-gen builds.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=DDR5+32GB",
-    stock: 30,
-    attributes: { componentType: "RAM", memoryType: "DDR5", capacity: 32, modules: 2, speed: 6000, casLatency: 36 },
+    name: "Wireless Mouse",
+    price: 2500.00,
+    description: "Ergonomic black mouse.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Mouse",
+    stock: 10
   },
   {
     id: 5,
-    name: "NVIDIA RTX 4080 Super",
-    category: "GPU",
-    price: 34900,
-    description: "Ada Lovelace flagship for 4K gaming.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=RTX+4080S",
-    stock: 6,
-    attributes: { componentType: "GPU", chipset: "AD103", vram: 16, length: 336, recommendedPsu: 750 },
+    name: "Katakana Keycap Set",
+    price: 1800.00,
+    description: "Black aesthetic keycaps with Katakana legends for styling.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Keycap+Set",
+    stock: 30
   },
   {
     id: 6,
-    name: "Samsung 990 Pro 2TB",
-    category: "SSD",
-    price: 4890,
-    description: "Ultra-fast NVMe SSD with PCIe 4.0.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=990+Pro+2TB",
-    stock: 25,
-    attributes: { componentType: "SSD", formFactor: "M.2 2280", interface: "PCIe 4.0 x4", capacity: 2000, readSpeed: 7450, writeSpeed: 6900 },
+    name: "Portable NVMe SSD 1TB",
+    price: 3890.00,
+    description: "Ultra-fast external storage with USB 3.2 Gen 2 interface.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Portable+SSD",
+    stock: 25
   },
   {
     id: 7,
-    name: "Seagate Barracuda 4TB",
-    category: "HDD",
-    price: 2990,
-    description: "Reliable 3.5\" desktop hard drive.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Barracuda+4TB",
-    stock: 40,
-    attributes: { componentType: "HDD", formFactor: "3.5 inch", interface: "SATA III", capacity: 4000, rpm: 7200, cache: 256 },
+    name: "USB-C Hub 8-in-1",
+    price: 1450.00,
+    description: "Aluminum multiport adapter with HDMI 4K and Ethernet.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=USB-C+Hub",
+    stock: 40
   },
   {
     id: 8,
-    name: "Corsair RM1000x",
-    category: "PSU",
-    price: 6490,
-    description: "1000W fully modular 80+ Gold PSU.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=RM1000x",
-    stock: 18,
-    attributes: { componentType: "PSU", wattage: 1000, efficiency: "80+ Gold", modularity: "Full", formFactor: "ATX" },
+    name: "Dual Monitor Desk Mount",
+    price: 1990.00,
+    description: "Heavy-duty gas spring arm for 17-32 inch screens.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Monitor+Mount",
+    stock: 12
   },
   {
     id: 9,
-    name: "Lian Li PC-O11 Dynamic EVO",
-    category: "Case",
-    price: 4200,
-    description: "Dual chamber mid-tower with showcase design.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=O11+EVO",
-    stock: 14,
-    attributes: { componentType: "Case", formFactor: "Mid Tower", motherboardSupport: ["ATX", "Micro-ATX", "Mini-ITX"], maxGpuLength: 400, maxCpuCoolerHeight: 167 },
+    name: "4K Ultra HD Webcam",
+    price: 4500.00,
+    description: "Pro webcam with auto-focus and dual noise-canceling mics.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=4K+Webcam",
+    stock: 18
   },
   {
     id: 10,
-    name: "Noctua NH-D15 G2",
-    category: "CPU Cooler",
-    price: 3590,
-    description: "Dual-tower air cooler with premium fans.",
-    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=NH-D15",
-    stock: 20,
-    attributes: { componentType: "CPU Cooler", type: "Air Cooler", socketSupport: ["LGA1700", "LGA1200", "AM5", "AM4"], height: 168 },
+    name: "GaN Fast Charger 100W",
+    price: 1690.00,
+    description: "Compact 4-port wall charger for laptops and smartphones.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=GaN+Charger",
+    stock: 35
   },
+  {
+    id: 11,
+    name: "VR Headset Display Stand",
+    price: 1100.00,
+    description: "Sleek 3D printed stand for your VR equipment.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=VR+Stand",
+    stock: 25
+  },
+  {
+    id: 12,
+    name: "RGB Laptop Cooling Pad",
+    price: 950.00,
+    description: "High-performance quiet fans with adjustable height.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Laptop+Cooler",
+    stock: 50
+  },
+  {
+    id: 13,
+    name: "High-Speed 3D Printer Nozzle",
+    price: 650.00,
+    description: "Hardened steel nozzle for fast and precise printing.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Printer+Nozzle",
+    stock: 40
+  },
+  {
+    id: 14,
+    name: "Stream Deck Controller",
+    price: 5900.00,
+    description: "15 customizable LCD keys for studio and workflow automation.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Stream+Deck",
+    stock: 8
+  },
+  {
+    id: 15,
+    name: "Matte Black Desk Mat",
+    price: 890.00,
+    description: "Large size, waterproof material for a clean setup.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Desk+Mat",
+    stock: 60
+  },
+  {
+    id: 16,
+    name: "Wi-Fi 6E Mesh Router",
+    price: 4800.00,
+    description: "Tri-band gigabit wireless router for seamless home coverage.",
+    imageUrl: "https://placehold.co/400x400/111111/FFFFFF?text=Mesh+Router",
+    stock: 14
+  }
 ];
