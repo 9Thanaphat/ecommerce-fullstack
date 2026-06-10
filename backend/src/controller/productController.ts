@@ -13,9 +13,14 @@ export const getProducts = async () => {
 
 export const addProduct = async ({ body }: { body: InsertProduct }) => {
   try {
-    await db.insert(products).values(body); 
+    const { attributes, ...rest } = body;
+    await db.insert(products).values({
+      ...rest,
+      attributes: attributes ?? {},
+    });
     return { success: true, message: "Product added successfully" };
   } catch (error) {
+    console.error("addProduct error:", error);
     return { success: false, message: "Failed to add product" };
   }
 };
