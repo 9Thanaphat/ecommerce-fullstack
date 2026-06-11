@@ -1,19 +1,16 @@
-import { Elysia, t } from "elysia";
-import { otps, users } from "../db/schema";
+import { users } from "../db/schema";
 import { db } from "../db";
-import { eq, and } from "drizzle-orm";
-import { jwt } from "@elysiajs/jwt";
+import { eq } from "drizzle-orm";
 
 type LoginBody = {
   email: string;
-  password: string; 
+  password: string;
 };
 
 type JwtHelper = {
   sign: (payload: Record<string, any>) => Promise<string>;
 };
 
-// jwt 
 export const loginUser = async (body: LoginBody, jwt: JwtHelper) => {
   try {
     // Find user by email
@@ -53,6 +50,7 @@ export const loginUser = async (body: LoginBody, jwt: JwtHelper) => {
     const token = await jwt.sign({
       email: user.email,
       id: user.id,
+      role: user.role,
     });
 
     return {

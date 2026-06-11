@@ -49,12 +49,12 @@ function AttributesForm({
     onChange({ ...(attributes as Record<string, unknown>), [key]: value } as ProductAttributes);
 
   const numField = (label: string, key: string, value: number, step = 1) => (
-    <div className="form-group" key={key}>
-      <label className="form-label" htmlFor={`attr-${key}`}>{label}</label>
+    <div className="flex flex-col gap-1.5" key={key}>
+      <label className="text-xs font-medium text-white/50" htmlFor={`attr-${key}`}>{label}</label>
       <input
         id={`attr-${key}`}
         type="number"
-        className="form-input"
+        className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
         value={value || ""}
         step={step}
         min={0}
@@ -64,11 +64,11 @@ function AttributesForm({
   );
 
   const txtField = (label: string, key: string, value: string) => (
-    <div className="form-group" key={key}>
-      <label className="form-label" htmlFor={`attr-${key}`}>{label}</label>
+    <div className="flex flex-col gap-1.5" key={key}>
+      <label className="text-xs font-medium text-white/50" htmlFor={`attr-${key}`}>{label}</label>
       <input
         id={`attr-${key}`}
-        className="form-input"
+        className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
         value={value}
         onChange={(e) => set(key, e.target.value)}
       />
@@ -76,11 +76,11 @@ function AttributesForm({
   );
 
   const selField = (label: string, key: string, value: string, options: string[]) => (
-    <div className="form-group" key={key}>
-      <label className="form-label" htmlFor={`attr-${key}`}>{label}</label>
+    <div className="flex flex-col gap-1.5" key={key}>
+      <label className="text-xs font-medium text-white/50" htmlFor={`attr-${key}`}>{label}</label>
       <select
         id={`attr-${key}`}
-        className="form-input"
+        className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors appearance-none cursor-pointer"
         value={value}
         onChange={(e) => set(key, e.target.value)}
       >
@@ -90,14 +90,14 @@ function AttributesForm({
   );
 
   const boolField = (label: string, key: string, value: boolean) => (
-    <div className="form-group" key={key} style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
-      <label className="form-label">{label}</label>
-      <label style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", cursor: "pointer", fontSize: "var(--text-sm)" }}>
+    <div className="flex flex-col gap-1.5" key={key}>
+      <label className="text-xs font-medium text-white/50">{label}</label>
+      <label className="flex items-center gap-2 cursor-pointer text-sm text-white/70">
         <input
           type="checkbox"
           checked={value}
           onChange={(e) => set(key, e.target.checked)}
-          style={{ accentColor: "var(--color-primary)", width: 16, height: 16 }}
+          className="accent-red-500 w-4 h-4 cursor-pointer"
         />
         {value ? "Yes" : "No"}
       </label>
@@ -105,11 +105,11 @@ function AttributesForm({
   );
 
   const arrField = (label: string, key: string, value: string[]) => (
-    <div className="form-group" key={key}>
-      <label className="form-label" htmlFor={`attr-${key}`}>{label} <span style={{ color: "var(--color-muted)", fontWeight: 400 }}>(comma separated)</span></label>
+    <div className="flex flex-col gap-1.5" key={key}>
+      <label className="text-xs font-medium text-white/50" htmlFor={`attr-${key}`}>{label} <span className="font-normal text-white/30">(comma separated)</span></label>
       <input
         id={`attr-${key}`}
-        className="form-input"
+        className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
         value={value.join(", ")}
         onChange={(e) => set(key, e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
       />
@@ -120,7 +120,7 @@ function AttributesForm({
   const type = (attributes as { componentType: string }).componentType;
 
   const grid2 = (children: React.ReactNode) => (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+    <div className="grid grid-cols-2 gap-4">
       {children}
     </div>
   );
@@ -129,106 +129,106 @@ function AttributesForm({
     case "CPU": {
       const a = attributes as Extract<ProductAttributes, { componentType: "CPU" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {grid2(<>{txtField("Socket", "socket", a.socket)}{numField("Cores", "cores", a.cores)}</>)}
           {grid2(<>{numField("Threads", "threads", a.threads)}{numField("Base Clock (GHz)", "baseClock", a.baseClock, 0.1)}</>)}
           {grid2(<>{numField("Boost Clock (GHz)", "boostClock", a.boostClock, 0.1)}{numField("TDP (W)", "tdp", a.tdp)}</>)}
           {boolField("Integrated Graphics", "integratedGraphics", a.integratedGraphics)}
-        </>
+        </div>
       );
     }
     case "Mainboard": {
       const a = attributes as Extract<ProductAttributes, { componentType: "Mainboard" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {grid2(<>{txtField("Socket", "socket", a.socket)}{txtField("Chipset", "chipset", a.chipset)}</>)}
           {grid2(<>
             {selField("Form Factor", "formFactor", a.formFactor, ["ATX", "Micro-ATX", "Mini-ITX", "E-ATX"])}
             {selField("Memory Type", "memoryType", a.memoryType, ["DDR4", "DDR5"])}
           </>)}
           {grid2(<>{numField("RAM Slots", "ramSlots", a.ramSlots)}{boolField("Has Wi-Fi", "hasWifi", a.hasWifi)}</>)}
-        </>
+        </div>
       );
     }
     case "RAM": {
       const a = attributes as Extract<ProductAttributes, { componentType: "RAM" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {selField("Memory Type", "memoryType", a.memoryType, ["DDR4", "DDR5"])}
           {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Modules", "modules", a.modules)}</>)}
           {grid2(<>{numField("Speed (MHz)", "speed", a.speed)}{numField("CAS Latency", "casLatency", a.casLatency)}</>)}
-        </>
+        </div>
       );
     }
     case "GPU": {
       const a = attributes as Extract<ProductAttributes, { componentType: "GPU" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {txtField("Chipset", "chipset", a.chipset)}
           {grid2(<>{numField("VRAM (GB)", "vram", a.vram)}{numField("Card Length (mm)", "length", a.length)}</>)}
           {numField("Recommended PSU (W)", "recommendedPsu", a.recommendedPsu)}
-        </>
+        </div>
       );
     }
     case "SSD": {
       const a = attributes as Extract<ProductAttributes, { componentType: "SSD" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {grid2(<>
             {selField("Form Factor", "formFactor", a.formFactor, ["M.2 2280", "2.5 inch", "PCIe Add-in Card"])}
             {selField("Interface", "interface", a.interface, ["PCIe 5.0 x4", "PCIe 4.0 x4", "PCIe 3.0 x4", "SATA III"])}
           </>)}
           {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Read Speed (MB/s)", "readSpeed", a.readSpeed)}</>)}
           {numField("Write Speed (MB/s)", "writeSpeed", a.writeSpeed)}
-        </>
+        </div>
       );
     }
     case "HDD": {
       const a = attributes as Extract<ProductAttributes, { componentType: "HDD" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {grid2(<>
             {selField("Form Factor", "formFactor", a.formFactor, ["3.5 inch", "2.5 inch"])}
             {selField("RPM", "rpm", String(a.rpm), ["5400", "7200"])}
           </>)}
           {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Cache (MB)", "cache", a.cache)}</>)}
-        </>
+        </div>
       );
     }
     case "PSU": {
       const a = attributes as Extract<ProductAttributes, { componentType: "PSU" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {numField("Wattage (W)", "wattage", a.wattage)}
           {grid2(<>
             {selField("Efficiency", "efficiency", a.efficiency, ["80+ Titanium", "80+ Platinum", "80+ Gold", "80+ Bronze", "80+ Standard"])}
             {selField("Modularity", "modularity", a.modularity, ["Full", "Semi", "Non"])}
           </>)}
           {selField("Form Factor", "formFactor", a.formFactor, ["ATX", "SFX", "SFX-L"])}
-        </>
+        </div>
       );
     }
     case "Case": {
       const a = attributes as Extract<ProductAttributes, { componentType: "Case" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {selField("Form Factor", "formFactor", a.formFactor, ["Full Tower", "Mid Tower", "Mini ITX"])}
           {arrField("Motherboard Support", "motherboardSupport", a.motherboardSupport)}
           {grid2(<>{numField("Max GPU Length (mm)", "maxGpuLength", a.maxGpuLength)}{numField("Max CPU Cooler Height (mm)", "maxCpuCoolerHeight", a.maxCpuCoolerHeight)}</>)}
-        </>
+        </div>
       );
     }
     case "CPU Cooler": {
       const a = attributes as Extract<ProductAttributes, { componentType: "CPU Cooler" }>;
       return (
-        <>
+        <div className="flex flex-col gap-4">
           {selField("Type", "type", a.type, ["Air Cooler", "Liquid Cooler"])}
           {arrField("Socket Support", "socketSupport", a.socketSupport)}
           {a.type === "Air Cooler"
             ? numField("Height (mm)", "height", a.height ?? 0)
             : selField("Radiator Size (mm)", "radiatorSize", String(a.radiatorSize ?? 240), ["120", "240", "280", "360", "420"])
           }
-        </>
+        </div>
       );
     }
     default: return null;
@@ -321,16 +321,19 @@ export default function ProductManagement() {
 
   // ── Render ─────────────────────────────────────────────────
   return (
-    <div className="admin-page">
-      <div className="admin-page-header">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+    <div className="p-8 max-w-6xl">
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="admin-page-title">Products</h1>
-            <p className="admin-page-subtitle">
+            <h1 className="text-xl font-semibold text-white">Products</h1>
+            <p className="text-sm text-white/35 mt-0.5">
               {products.length} item{products.length !== 1 ? "s" : ""} in catalogue
             </p>
           </div>
-          <button className="btn btn-primary" onClick={openCreate}>
+          <button
+            className="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            onClick={openCreate}
+          >
             <Plus size={14} aria-hidden="true" />
             Add product
           </button>
@@ -338,93 +341,87 @@ export default function ProductManagement() {
       </div>
 
       {/* Table */}
-      <div className="data-table-wrapper">
+      <div className="bg-[#161616] border border-white/[0.06] rounded-xl overflow-hidden">
         {products.length === 0 ? (
-          <div className="empty-state">
-            <Package size={40} className="empty-state-icon" aria-hidden="true" />
-            <p className="empty-state-title">No products yet</p>
-            <p className="empty-state-desc">Add your first product to start building the catalogue.</p>
-            <button className="btn btn-primary" onClick={openCreate}>
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+            <Package size={40} className="text-white/10 mb-4" aria-hidden="true" />
+            <p className="text-sm font-medium text-white/70 mb-1">No products yet</p>
+            <p className="text-xs text-white/30 mb-6">Add your first product to start building the catalogue.</p>
+            <button
+              className="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              onClick={openCreate}
+            >
               <Plus size={14} />
               Add product
             </button>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="data-table" aria-label="Product catalogue">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left" aria-label="Product catalogue">
               <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Category</th>
-                  <th style={{ textAlign: "right" }}>Price (฿)</th>
-                  <th style={{ textAlign: "right" }}>Stock</th>
-                  <th>Stock status</th>
-                  <th style={{ textAlign: "right" }}>Actions</th>
+                <tr className="border-b border-white/[0.06]">
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Product</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Category</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25 text-right">Price (฿)</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25 text-right">Stock</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Stock status</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((p) => {
                   const stockBadge =
                     p.stock === 0
-                      ? { label: "Out of stock", cls: "badge badge-error" }
+                      ? { label: "Out of stock", cls: "bg-red-500/10 text-red-400" }
                       : p.stock <= 5
-                        ? { label: "Low stock",    cls: "badge badge-warning" }
-                        : { label: "In stock",     cls: "badge badge-success" };
+                        ? { label: "Low stock",    cls: "bg-amber-500/10 text-amber-400" }
+                        : { label: "In stock",     cls: "bg-emerald-500/10 text-emerald-400" };
                   return (
-                    <tr key={p.id}>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-                          <div
-                            style={{
-                              width: 36, height: 36,
-                              borderRadius: "var(--radius-sm)",
-                              background: "var(--color-surface-2)",
-                              overflow: "hidden", flexShrink: 0,
-                            }}
-                          >
+                    <tr key={p.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-lg bg-white/5 overflow-hidden shrink-0">
                             {p.imageUrl && (
-                              <img src={p.imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              <img src={p.imageUrl} alt="" className="w-full h-full object-cover" />
                             )}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 500 }}>{p.name}</div>
+                            <div className="text-sm font-medium text-white/80">{p.name}</div>
                             {p.description && (
-                              <div
-                                style={{
-                                  fontSize: "var(--text-xs)", color: "var(--color-muted)",
-                                  maxWidth: "28ch", overflow: "hidden",
-                                  textOverflow: "ellipsis", whiteSpace: "nowrap",
-                                }}
-                              >
+                              <div className="text-[11px] text-white/30 max-w-[28ch] truncate">
                                 {p.description}
                               </div>
                             )}
                           </div>
                         </div>
                       </td>
-                      <td>
-                        <span className="badge" style={{ background: "var(--color-surface-2)", color: "var(--color-ink)" }}>
+                      <td className="px-6 py-4">
+                        <span className="text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full bg-white/5 text-white/60">
                           {p.category}
                         </span>
                       </td>
-                      <td style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+                      <td className="px-6 py-4 text-sm text-white/70 text-right tabular-nums">
                         {p.price.toLocaleString()}
                       </td>
-                      <td style={{ textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
+                      <td className="px-6 py-4 text-sm text-white/70 text-right tabular-nums">
                         {p.stock}
                       </td>
-                      <td><span className={stockBadge.cls}>{stockBadge.label}</span></td>
-                      <td style={{ textAlign: "right" }}>
-                        <div style={{ display: "inline-flex", gap: "var(--space-2)" }}>
+                      <td className="px-6 py-4">
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${stockBadge.cls}`}>
+                          {stockBadge.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="inline-flex gap-1.5">
                           <button
-                            className="btn btn-ghost btn-icon"
+                            className="p-1.5 rounded-md text-white/40 hover:text-white/90 hover:bg-white/5 transition-colors"
                             onClick={() => openEdit(p)}
                             aria-label={`Edit ${p.name}`}
                           >
                             <Pencil size={14} />
                           </button>
                           <button
-                            className="btn btn-danger btn-icon"
+                            className="p-1.5 rounded-md text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                             onClick={() => openDelete(p)}
                             aria-label={`Delete ${p.name}`}
                           >
@@ -444,29 +441,33 @@ export default function ProductManagement() {
       {/* ── Create / Edit Modal ─────────────────────────────── */}
       {(modal?.mode === "create" || modal?.mode === "edit") && (
         <div
-          className="modal-backdrop"
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
           onClick={(e) => e.target === e.currentTarget && closeModal()}
           role="dialog"
           aria-modal="true"
           aria-label={modal.mode === "create" ? "Add product" : "Edit product"}
         >
-          <div className="modal" style={{ maxWidth: 560 }}>
-            <div className="modal-header">
-              <span className="modal-title">
+          <div className="bg-[#111111] border border-white/10 rounded-2xl w-full max-w-xl flex flex-col overflow-hidden max-h-[90vh]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-[#161616]">
+              <span className="text-sm font-semibold text-white">
                 {modal.mode === "create" ? "Add product" : "Edit product"}
               </span>
-              <button className="btn btn-ghost btn-icon" onClick={closeModal} aria-label="Close">
+              <button
+                className="p-1 rounded-md text-white/40 hover:text-white/90 hover:bg-white/5 transition-colors"
+                onClick={closeModal}
+                aria-label="Close"
+              >
                 <X size={16} />
               </button>
             </div>
 
-            <div className="modal-body" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+            <div className="p-6 overflow-y-auto flex flex-col gap-5">
               {/* Category selector — shown first so attributes form below reacts */}
-              <div className="form-group">
-                <label className="form-label" htmlFor="pm-category">Category</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-white/50" htmlFor="pm-category">Category</label>
                 <select
                   id="pm-category"
-                  className="form-input"
+                  className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors appearance-none cursor-pointer"
                   value={form.category}
                   onChange={(e) => handleCategoryChange(e.target.value as ProductCategory)}
                 >
@@ -477,11 +478,11 @@ export default function ProductManagement() {
               </div>
 
               {/* Base fields */}
-              <div className="form-group">
-                <label className="form-label" htmlFor="pm-name">Name</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-white/50" htmlFor="pm-name">Name</label>
                 <input
                   id="pm-name"
-                  className="form-input"
+                  className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
                   value={form.name}
                   onChange={(e) => field("name", e)}
                   placeholder="Product name"
@@ -489,25 +490,25 @@ export default function ProductManagement() {
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="pm-price">Price (฿)</label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-white/50" htmlFor="pm-price">Price (฿)</label>
                   <input
                     id="pm-price"
                     type="number"
-                    className="form-input"
+                    className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
                     value={form.price || ""}
                     onChange={(e) => field("price", e)}
                     placeholder="0"
                     min={0}
                   />
                 </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="pm-stock">Stock</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-white/50" htmlFor="pm-stock">Stock</label>
                   <input
                     id="pm-stock"
                     type="number"
-                    className="form-input"
+                    className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
                     value={form.stock || ""}
                     onChange={(e) => field("stock", e)}
                     placeholder="0"
@@ -516,22 +517,22 @@ export default function ProductManagement() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label" htmlFor="pm-desc">Description</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-white/50" htmlFor="pm-desc">Description</label>
                 <textarea
                   id="pm-desc"
-                  className="form-textarea"
+                  className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors resize-none min-h-[80px]"
                   value={form.description ?? ""}
                   onChange={(e) => field("description", e)}
                   placeholder="Short product description"
                 />
               </div>
 
-              <div className="form-group">
-                <label className="form-label" htmlFor="pm-img">Image URL</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-white/50" htmlFor="pm-img">Image URL</label>
                 <input
                   id="pm-img"
-                  className="form-input"
+                  className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
                   value={form.imageUrl ?? ""}
                   onChange={(e) => field("imageUrl", e)}
                   placeholder="https://..."
@@ -539,23 +540,8 @@ export default function ProductManagement() {
               </div>
 
               {/* ── Dynamic attributes section ── */}
-              <div
-                style={{
-                  borderTop: "1px solid var(--color-border)",
-                  paddingTop: "var(--space-4)",
-                  marginTop: "var(--space-2)",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: "var(--text-xs)",
-                    fontWeight: 600,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "var(--color-muted)",
-                    marginBottom: "var(--space-4)",
-                  }}
-                >
+              <div className="border-t border-white/[0.06] pt-5 mt-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-4">
                   {form.category} Specifications
                 </p>
                 <AttributesForm
@@ -565,10 +551,15 @@ export default function ProductManagement() {
               </div>
             </div>
 
-            <div className="modal-footer">
-              <button className="btn btn-ghost" onClick={closeModal}>Cancel</button>
+            <div className="px-6 py-4 border-t border-white/[0.06] bg-[#161616] flex justify-end gap-3">
               <button
-                className="btn btn-primary"
+                className="text-white/50 hover:text-white/90 hover:bg-white/5 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
                 onClick={handleSave}
                 disabled={!form.name.trim() || submitting}
               >
@@ -586,29 +577,42 @@ export default function ProductManagement() {
       {/* ── Delete Confirm Modal ─────────────────────────────── */}
       {modal?.mode === "delete" && (
         <div
-          className="modal-backdrop"
+          className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
           onClick={(e) => e.target === e.currentTarget && closeModal()}
           role="dialog"
           aria-modal="true"
           aria-label="Confirm delete"
         >
-          <div className="modal" style={{ maxWidth: 400 }}>
-            <div className="modal-header">
-              <span className="modal-title">Delete product</span>
-              <button className="btn btn-ghost btn-icon" onClick={closeModal} aria-label="Close">
+          <div className="bg-[#111111] border border-white/10 rounded-2xl w-full max-w-sm flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-[#161616]">
+              <span className="text-sm font-semibold text-white">Delete product</span>
+              <button
+                className="p-1 rounded-md text-white/40 hover:text-white/90 hover:bg-white/5 transition-colors"
+                onClick={closeModal}
+                aria-label="Close"
+              >
                 <X size={16} />
               </button>
             </div>
-            <div className="modal-body">
-              <p style={{ fontSize: "var(--text-sm)", color: "var(--color-muted)", lineHeight: 1.6 }}>
+            <div className="p-6">
+              <p className="text-sm text-white/50 leading-relaxed">
                 Delete{" "}
-                <strong style={{ color: "var(--color-ink)" }}>{modal.product.name}</strong>
+                <strong className="text-white font-medium">{modal.product.name}</strong>
                 ? This cannot be undone.
               </p>
             </div>
-            <div className="modal-footer">
-              <button className="btn btn-ghost" onClick={closeModal}>Cancel</button>
-              <button className="btn btn-danger" onClick={handleDelete} disabled={submitting}>
+            <div className="px-6 py-4 border-t border-white/[0.06] bg-[#161616] flex justify-end gap-3">
+              <button
+                className="text-white/50 hover:text-white/90 hover:bg-white/5 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500/10 text-red-500 hover:bg-red-500/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                onClick={handleDelete}
+                disabled={submitting}
+              >
                 {submitting ? "Deleting…" : "Delete product"}
               </button>
             </div>

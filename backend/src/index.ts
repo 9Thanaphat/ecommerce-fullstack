@@ -9,8 +9,13 @@ if (!Bun.env.JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined in environment variables");
 }
 
+const frontendUrl = Bun.env.FRONTEND_URL;
+
 const app = new Elysia()
-  .use(cors())
+  .use(cors({
+    origin: frontendUrl,
+    credentials: true,
+  }))
   .get("/", () => "🛒 E-Commerce API is running!")
   .use(productRoutes) // Mount product routes under /products
   .use(authRoutes)

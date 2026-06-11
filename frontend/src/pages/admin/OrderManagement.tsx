@@ -26,11 +26,11 @@ const mockOrders: Order[] = [
   { id: "ORD-008", customer: "Krit M.",        email: "krit@example.com",       items: 1, total: 850,   status: "pending",   date: "2026-05-29" },
 ];
 
-const statusConfig: Record<OrderStatus, { label: string; cls: string }> = {
-  delivered: { label: "Delivered", cls: "badge badge-success" },
-  shipped:   { label: "Shipped",   cls: "badge badge-warning" },
-  pending:   { label: "Pending",   cls: "badge badge-neutral" },
-  cancelled: { label: "Cancelled", cls: "badge badge-error"   },
+const statusStyle: Record<OrderStatus, string> = {
+  delivered: "bg-emerald-500/10 text-emerald-400",
+  shipped:   "bg-amber-500/10 text-amber-400",
+  pending:   "bg-white/5 text-white/40",
+  cancelled: "bg-red-500/10 text-red-400",
 };
 
 const ALL = "all" as const;
@@ -58,22 +58,18 @@ export default function OrderManagement() {
   };
 
   return (
-    <div className="admin-page">
-      <div className="admin-page-header">
-        <h1 className="admin-page-title">Orders</h1>
-        <p className="admin-page-subtitle">
+    <div className="p-8 max-w-6xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-xl font-semibold text-white">Orders</h1>
+        <p className="text-sm text-white/35 mt-0.5">
           {orders.length} total · {orders.filter((o) => o.status === "pending").length} pending
         </p>
       </div>
 
       {/* Filter tabs */}
       <div
-        style={{
-          display: "flex",
-          gap: "var(--space-2)",
-          marginBottom: "var(--space-6)",
-          flexWrap: "wrap",
-        }}
+        className="flex flex-wrap gap-2 mb-6"
         role="group"
         aria-label="Filter orders by status"
       >
@@ -86,36 +82,21 @@ export default function OrderManagement() {
           return (
             <button
               key={value}
-              className={isActive ? "btn btn-ghost" : "btn btn-ghost"}
               onClick={() => setFilter(value)}
               aria-pressed={isActive}
-              style={
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                 isActive
-                  ? {
-                      borderColor: "var(--color-border-active)",
-                      color: "var(--color-ink)",
-                    }
-                  : {}
-              }
+                  ? "bg-white/[0.07] border-white/20 text-white"
+                  : "bg-transparent border-transparent text-white/40 hover:bg-white/[0.04] hover:text-white/70"
+              }`}
             >
               {label}
               <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minWidth: 18,
-                  height: 18,
-                  borderRadius: "var(--radius-full)",
-                  background: isActive
-                    ? "var(--color-primary)"
-                    : "var(--color-surface-2)",
-                  color: isActive ? "var(--color-ink)" : "var(--color-muted)",
-                  fontSize: "0.65rem",
-                  fontWeight: 700,
-                  padding: "0 4px",
-                  marginLeft: "var(--space-1)",
-                }}
+                className={`inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full text-[10px] font-bold px-1 ${
+                  isActive
+                    ? "bg-red-500/20 text-red-400"
+                    : "bg-white/5 text-white/40"
+                }`}
               >
                 {count}
               </span>
@@ -125,87 +106,67 @@ export default function OrderManagement() {
       </div>
 
       {/* Table */}
-      <div className="data-table-wrapper">
+      <div className="bg-[#161616] border border-white/[0.06] rounded-xl overflow-hidden">
         {visible.length === 0 ? (
-          <div className="empty-state">
-            <ShoppingBag size={40} className="empty-state-icon" aria-hidden="true" />
-            <p className="empty-state-title">No orders</p>
-            <p className="empty-state-desc">
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+            <ShoppingBag size={40} className="text-white/10 mb-4" aria-hidden="true" />
+            <p className="text-sm font-medium text-white/70 mb-1">No orders</p>
+            <p className="text-xs text-white/30">
               No {filter === ALL ? "" : filter} orders found.
             </p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="data-table" aria-label="Order list">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left" aria-label="Order list">
               <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>Customer</th>
-                  <th>Items</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: "right" }}>Total (฿)</th>
-                  <th>Date</th>
-                  <th>Update status</th>
+                <tr className="border-b border-white/[0.06]">
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Order</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Customer</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Items</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Status</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25 text-right">Total (฿)</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Date</th>
+                  <th className="px-6 py-3 text-[10px] font-semibold uppercase tracking-widest text-white/25">Update status</th>
                 </tr>
               </thead>
               <tbody>
                 {visible.map((order) => {
-                  const s = statusConfig[order.status];
                   return (
-                    <tr key={order.id}>
-                      <td
-                        style={{
-                          color: "var(--color-muted)",
-                          fontVariantNumeric: "tabular-nums",
-                        }}
-                      >
+                    <tr key={order.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
+                      <td className="px-6 py-4 text-xs text-white/30 tabular-nums">
                         {order.id}
                       </td>
-                      <td>
-                        <div style={{ fontWeight: 500 }}>{order.customer}</div>
-                        <div
-                          style={{
-                            fontSize: "var(--text-xs)",
-                            color: "var(--color-muted)",
-                          }}
-                        >
-                          {order.email}
-                        </div>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-white/80 mb-0.5">{order.customer}</div>
+                        <div className="text-xs text-white/30">{order.email}</div>
                       </td>
-                      <td style={{ color: "var(--color-muted)" }}>
+                      <td className="px-6 py-4 text-sm text-white/50">
                         {order.items}
                       </td>
-                      <td>
-                        <span className={s.cls}>{s.label}</span>
+                      <td className="px-6 py-4">
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full ${statusStyle[order.status]}`}>
+                          {order.status}
+                        </span>
                       </td>
-                      <td
-                        style={{
-                          textAlign: "right",
-                          fontVariantNumeric: "tabular-nums",
-                        }}
-                      >
+                      <td className="px-6 py-4 text-sm text-white/70 text-right tabular-nums">
                         {order.total.toLocaleString()}
                       </td>
-                      <td style={{ color: "var(--color-muted)" }}>
+                      <td className="px-6 py-4 text-xs text-white/30">
                         {order.date}
                       </td>
-                      <td>
+                      <td className="px-6 py-4">
                         <select
-                          className="form-select"
-                          style={{ width: "auto", minWidth: 120 }}
+                          className="bg-[#0a0a0a] border border-white/10 text-white/70 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors cursor-pointer"
                           value={order.status}
                           onChange={(e) =>
                             updateStatus(order.id, e.target.value as OrderStatus)
                           }
                           aria-label={`Update status for ${order.id}`}
                         >
-                          {(
-                            Object.keys(statusConfig) as OrderStatus[]
-                          ).map((s) => (
-                            <option key={s} value={s}>
-                              {statusConfig[s].label}
-                            </option>
-                          ))}
+                          <option value="pending">Pending</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
                         </select>
                       </td>
                     </tr>

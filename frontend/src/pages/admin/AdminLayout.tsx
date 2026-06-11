@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink, Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -7,6 +7,7 @@ import {
   Menu,
   X,
   Cpu,
+  Loader2,
 } from "lucide-react";
 import Dashboard from "./Dashboard";
 import ProductManagement from "./ProductManagement";
@@ -20,6 +21,52 @@ const navItems = [
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [authState, setAuthState] = useState<"loading" | "authorized" | "unauthorized">("loading");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAdminAuth = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const response = await fetch(`${apiUrl}/auth/check-auth`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.authenticated) {
+          navigate("/auth", { replace: true });
+          return;
+        }
+
+        if (data.user?.role !== "admin") {
+          navigate("/", { replace: true });
+          return;
+        }
+
+        setAuthState("authorized");
+      } catch (error) {
+        navigate("/auth", { replace: true });
+      }
+    };
+
+    checkAdminAuth();
+  }, [navigate]);
+
+
+  if (authState === "loading") {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0d0d0d]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 size={24} className="text-white/30 animate-spin" />
+          <span className="text-xs text-white/20 tracking-widest uppercase">
+            Verifying access…
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-[#0d0d0d]">
@@ -111,3 +158,4 @@ export default function AdminLayout() {
     </div>
   );
 }
+
