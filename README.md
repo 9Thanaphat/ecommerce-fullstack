@@ -51,6 +51,13 @@ Full-stack e-commerce application built as a personal learning project to practi
 - Product management — full CRUD with modal UI (create, edit, delete)
 - Order management — filter by status, inline status update
 - Responsive sidebar, keyboard-accessible, empty states
+- Refactored to pure Tailwind CSS for cleaner dark mode UI
+
+**Frontend Store**
+- Home page landing with hero section and featured products
+- Product detail page (`/products/:id`) with component-specific specs
+- Sidebar filter (price range, category)
+- Standardized layout with React Router `Outlet`
 
 **Backend API**
 - `GET /products` — list all products
@@ -66,10 +73,7 @@ Full-stack e-commerce application built as a personal learning project to practi
 
 ### 🚧 In Progress
 
-- [ ] Home page (featured products)
 - [ ] Product listing → connect to real API (currently using mock data)
-- [ ] Product detail page (`/products/:id`)
-- [ ] Sidebar filter (price range, sort)
 - [ ] Backend PUT/DELETE product endpoints
 - [ ] Admin CRUD → connect to real API
 - [ ] Deploy (Vercel + Railway)
@@ -106,7 +110,7 @@ ecommerce-fullstack/
 │       │   ├── ProductCard.tsx
 │       │   ├── SideBar.tsx
 │       │   └── auth/         # LoginForm, RegisterForm, OtpForm
-│       └── index.css         # Design system (500+ lines)
+│       └── index.css         # Design system
 └── docker-compose.yml        # PostgreSQL + Redis
 ```
 

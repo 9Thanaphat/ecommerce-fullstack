@@ -1,13 +1,12 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
-import { users } from "../db/schema";
-import { db } from "../db";
 import { cors } from "@elysiajs/cors";
 import { addProduct, updateProduct, deleteProduct } from "../controller/productController";
+import { requireAdmin } from "../middleware/authMiddleware";
 
 const frontendUrl = Bun.env.FRONTEND_URL;
 
-// ─── Shared base fields ───────────────────────────────────────────────────────
+
 const baseProductBody = {
   name: t.String(),
   description: t.String(),
@@ -16,7 +15,7 @@ const baseProductBody = {
   stock: t.Integer(),
 };
 
-// ─── Per-type attribute schemas ───────────────────────────────────────────────
+
 const cpuAttributes = t.Object({
   socket: t.String(),
   cores: t.Integer(),
@@ -101,26 +100,28 @@ const cpuCoolerAttributes = t.Object({
   ),
 });
 
-// ─── Discriminated union body ─────────────────────────────────────────────────
+
 const addProductBody = t.Union([
-  t.Object({ ...baseProductBody, category: t.Literal("CPU"),        attributes: cpuAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("Mainboard"),  attributes: mainboardAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("RAM"),        attributes: ramAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("GPU"),        attributes: gpuAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("SSD"),        attributes: ssdAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("HDD"),        attributes: hddAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("PSU"),        attributes: psuAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("Case"),       attributes: caseAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("CPU"), attributes: cpuAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("Mainboard"), attributes: mainboardAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("RAM"), attributes: ramAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("GPU"), attributes: gpuAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("SSD"), attributes: ssdAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("HDD"), attributes: hddAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("PSU"), attributes: psuAttributes }),
+  t.Object({ ...baseProductBody, category: t.Literal("Case"), attributes: caseAttributes }),
   t.Object({ ...baseProductBody, category: t.Literal("CPU Cooler"), attributes: cpuCoolerAttributes }),
 ]);
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
-  // .use(
-  //   cors({
-  //     origin: frontendUrl,
-  //     credentials: true,
-  //   }),
-  // )
+  .use(
+    cors({
+      origin: frontendUrl,
+      credentials: true,
+    }),
+  )
+  .use(jwt({ name: "jwt", secret: Bun.env.JWT_SECRET! }))
+  .use(requireAdmin)
 
   .group("/products", (group) =>
     group

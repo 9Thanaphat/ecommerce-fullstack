@@ -16,7 +16,7 @@ export default function Auth() {
       try {
         console.log("Checking authentication...");
         const apiUrl = import.meta.env.VITE_API_URL;
-        const response = await fetch(`${apiUrl}/users/check-auth`, {
+        const response = await fetch(`${apiUrl}/auth/check-auth`, {
           method: "GET",
           credentials: "include", // Include cookies for authentication
         });
