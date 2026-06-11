@@ -61,7 +61,7 @@ Full-stack e-commerce application built as a personal learning project to practi
 
 **Backend API**
 - `GET /products` — list all products
-- `POST /products` — create product (with Elysia `t.Object` validation)
+- `POST /admin/products`, `PUT /admin/products/:id`, `DELETE /admin/products/:id` — Admin product CRUD (with Elysia `t.Object` validation)
 - `POST /auth/register`, `POST /auth/verify-otp`, `POST /auth/resend-otp`
 - `POST /auth/login`, `GET /auth/check-auth`
 
@@ -74,7 +74,6 @@ Full-stack e-commerce application built as a personal learning project to practi
 ### 🚧 In Progress
 
 - [ ] Product listing → connect to real API (currently using mock data)
-- [ ] Backend PUT/DELETE product endpoints
 - [ ] Admin CRUD → connect to real API
 - [ ] Deploy (Vercel + Railway)
 
@@ -82,35 +81,27 @@ Full-stack e-commerce application built as a personal learning project to practi
 
 ## Project Structure
 
-```
+```text
 ecommerce-fullstack/
+├── DESIGN.md                 # Design system details
+├── PRODUCT.md                # Product specifications
+├── README.md                 # Project documentation
 ├── backend/
-│   └── src/
-│       ├── index.ts          # Entry point (Elysia app)
-│       ├── routes/
-│       │   ├── auth.ts       # Auth routes (JWT, CORS)
-│       │   ├── products.ts   # Product CRUD
-│       │   └── admin.ts      # Admin routes (stub)
-│       ├── controller/
-│       │   ├── register.ts   # Register + OTP logic
-│       │   └── login.ts      # Login + JWT sign
-│       └── db/
-│           ├── index.ts      # Drizzle client
-│           └── schema.ts     # DB schema (products, users, otps)
+│   ├── src/
+│   │   ├── controller/       # Controllers for business logic
+│   │   ├── db/               # Database schemas and Drizzle client
+│   │   ├── middleware/       # Authentication middlewares
+│   │   ├── routes/           # Elysia API routes
+│   │   └── index.ts          # Entry point (Elysia app)
+│   └── ...config files
 ├── frontend/
-│   └── src/
-│       ├── pages/
-│       │   ├── Home.tsx
-│       │   ├── Product.tsx
-│       │   ├── Auth.tsx
-│       │   └── admin/        # AdminLayout, Dashboard, ProductManagement, OrderManagement
-│       ├── components/
-│       │   ├── NavBar.tsx
-│       │   ├── ProductGrid.tsx
-│       │   ├── ProductCard.tsx
-│       │   ├── SideBar.tsx
-│       │   └── auth/         # LoginForm, RegisterForm, OtpForm
-│       └── index.css         # Design system
+│   ├── src/
+│   │   ├── components/       # Reusable UI components
+│   │   ├── pages/            # Page layouts and views (including Admin)
+│   │   ├── App.tsx           # React app root
+│   │   ├── index.css         # Design system CSS
+│   │   └── main.tsx          # Vite entry
+│   └── ...config files
 └── docker-compose.yml        # PostgreSQL + Redis
 ```
 
