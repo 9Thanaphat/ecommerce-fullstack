@@ -31,6 +31,7 @@ Full-stack e-commerce application built as a personal learning project to practi
 | Styling | TailwindCSS v4 + custom CSS design tokens (OKLCH) |
 | Language | TypeScript (full-stack) |
 | Email | Nodemailer (Gmail SMTP) |
+| Image Storage | Cloudinary |
 
 ---
 
@@ -59,9 +60,11 @@ Full-stack e-commerce application built as a personal learning project to practi
 - Sidebar filter (price range, category)
 - Standardized layout with React Router `Outlet`
 
-**Backend API**
+**Backend API & Storage**
 - `GET /products` — list all products
 - `POST /admin/products`, `PUT /admin/products/:id`, `DELETE /admin/products/:id` — Admin product CRUD (with Elysia `t.Object` validation)
+- Cloudinary integration for image uploads
+- Custom dynamic product attributes support
 - `POST /auth/register`, `POST /auth/verify-otp`, `POST /auth/resend-otp`
 - `POST /auth/login`, `GET /auth/check-auth`
 
@@ -73,8 +76,7 @@ Full-stack e-commerce application built as a personal learning project to practi
 
 ### 🚧 In Progress
 
-- [ ] Product listing → connect to real API (currently using mock data)
-- [ ] Admin CRUD → connect to real API
+- [ ] Connect order system to real API (currently using mock data)
 - [ ] Deploy (Vercel + Railway)
 
 ---
@@ -137,6 +139,11 @@ JWT_SECRET=your-secret-here
 GMAIL_USER=your@gmail.com
 GMAIL_APP_PASSWORD=your-app-password
 FRONTEND_URL=http://localhost:5173
+
+# Cloudinary (Image Upload)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
 # Docker
 DB_USER=user
