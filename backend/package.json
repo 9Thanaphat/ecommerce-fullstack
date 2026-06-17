@@ -8,6 +8,7 @@
   "dependencies": {
     "@elysiajs/cors": "^1.4.2",
     "@elysiajs/jwt": "^1.4.2",
+    "cloudinary": "^2.10.0",
     "drizzle-orm": "^0.45.2",
     "elysia": "latest",
     "nodemailer": "^8.0.10",

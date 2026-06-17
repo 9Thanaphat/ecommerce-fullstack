@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Cpu, CircuitBoard, Monitor, MemoryStick, HardDrive, Zap } from "lucide-react";
-import { mockProducts } from "../mockProduct";
-
-const featured = mockProducts.slice(0, 4);
+import { useState, useEffect } from "react";
+import type { Product } from "../types/product";
 
 const categories = [
   { label: "CPU",       icon: Cpu,          to: "/products" },
@@ -14,6 +13,15 @@ const categories = [
 ];
 
 export default function Home() {
+  const [featured, setFeatured] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
+      .then((res) => res.json())
+      .then((data: Product[]) => setFeatured(data.slice(0, 4)))
+      .catch((err) => console.error("Failed to fetch featured products:", err));
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
 

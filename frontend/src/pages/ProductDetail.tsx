@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ShoppingCart, Package } from "lucide-react";
-import { mockProducts, type ProductAttributes } from "../mockProduct";
+import { useState, useEffect } from "react";
+import type { Product, ProductAttributes } from "../types/product";
 
 // ─── Attribute renderers per componentType ────────────────────
 function SpecRow({ label, value }: { label: string; value: React.ReactNode }) {
@@ -112,7 +113,27 @@ function Specs({ attrs }: { attrs: ProductAttributes }) {
 // ─── Page ─────────────────────────────────────────────────────
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = mockProducts.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
+      .then((res) => res.json())
+      .then((data: Product[]) => {
+        const found = data.find((p) => p.id === Number(id));
+        setProduct(found || null);
+      })
+      .catch((err) => console.error("Failed to fetch product:", err))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-400 text-sm">Loading product details...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (

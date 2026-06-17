@@ -10,7 +10,7 @@ import {
   Box,
   Wind,
 } from "lucide-react";
-import type { ProductCategory } from "../mockProduct";
+import type { ProductCategory } from "../types/product";
 
 interface SideBarProps {
   search: string;

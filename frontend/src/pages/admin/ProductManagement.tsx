@@ -1,29 +1,33 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
-import { mockProducts, type Product, type ProductCategory, type ProductAttributes } from "../../mockProduct";
+import type { Product, ProductCategory, ProductAttributes } from "../../types/product";
 
 // ─── Category list ────────────────────────────────────────────
 const CATEGORIES: ProductCategory[] = [
-  "CPU", "Mainboard", "RAM", "GPU", "SSD", "HDD", "PSU", "Case", "CPU Cooler",
+  "CPU", "Mainboard", "RAM", "GPU", "SSD", "HDD", "PSU", "Case", "CPU Cooler", "Other"
 ];
 
 // ─── Default attributes per category ─────────────────────────
 function defaultAttributes(category: ProductCategory): ProductAttributes {
   switch (category) {
-    case "CPU":       return { componentType: "CPU", socket: "", cores: 0, threads: 0, baseClock: 0, boostClock: 0, tdp: 0, integratedGraphics: false };
+    case "CPU": return { componentType: "CPU", socket: "", cores: 0, threads: 0, baseClock: 0, boostClock: 0, tdp: 0, integratedGraphics: false };
     case "Mainboard": return { componentType: "Mainboard", socket: "", chipset: "", formFactor: "ATX", memoryType: "DDR5", ramSlots: 4, hasWifi: false };
-    case "RAM":       return { componentType: "RAM", memoryType: "DDR5", capacity: 0, modules: 2, speed: 0, casLatency: 0 };
-    case "GPU":       return { componentType: "GPU", chipset: "", vram: 0, length: 0, recommendedPsu: 0 };
-    case "SSD":       return { componentType: "SSD", formFactor: "M.2 2280", interface: "PCIe 4.0 x4", capacity: 0, readSpeed: 0, writeSpeed: 0 };
-    case "HDD":       return { componentType: "HDD", formFactor: "3.5 inch", interface: "SATA III", capacity: 0, rpm: 7200, cache: 0 };
-    case "PSU":       return { componentType: "PSU", wattage: 0, efficiency: "80+ Gold", modularity: "Full", formFactor: "ATX" };
-    case "Case":      return { componentType: "Case", formFactor: "Mid Tower", motherboardSupport: [], maxGpuLength: 0, maxCpuCoolerHeight: 0 };
-    case "CPU Cooler":return { componentType: "CPU Cooler", type: "Air Cooler", socketSupport: [] };
+    case "RAM": return { componentType: "RAM", memoryType: "DDR5", capacity: 0, modules: 2, speed: 0, casLatency: 0 };
+    case "GPU": return { componentType: "GPU", chipset: "", vram: 0, length: 0, recommendedPsu: 0 };
+    case "SSD": return { componentType: "SSD", formFactor: "M.2 2280", interface: "PCIe 4.0 x4", capacity: 0, readSpeed: 0, writeSpeed: 0 };
+    case "HDD": return { componentType: "HDD", formFactor: "3.5 inch", interface: "SATA III", capacity: 0, rpm: 7200, cache: 0 };
+    case "PSU": return { componentType: "PSU", wattage: 0, efficiency: "80+ Gold", modularity: "Full", formFactor: "ATX" };
+    case "Case": return { componentType: "Case", formFactor: "Mid Tower", motherboardSupport: [], maxGpuLength: 0, maxCpuCoolerHeight: 0 };
+    case "CPU Cooler": return { componentType: "CPU Cooler", type: "Air Cooler", socketSupport: [] };
+    case "Other": return { componentType: "Other" };
   }
 }
 
 // ─── Types ─────────────────────────────────────────────────────
-type ProductForm = Omit<Product, "id">;
+type ProductForm = Omit<Product, "id" | "imageUrl"> & {
+  image: File | null;
+  existingImageUrl: string | null;
+};
 
 function emptyForm(): ProductForm {
   return {
@@ -31,7 +35,8 @@ function emptyForm(): ProductForm {
     category: "CPU",
     price: 0,
     description: "",
-    imageUrl: "",
+    image: null,
+    existingImageUrl: null,
     stock: 0,
     attributes: defaultAttributes("CPU"),
   };
@@ -45,8 +50,25 @@ function AttributesForm({
   attributes: ProductAttributes;
   onChange: (updated: ProductAttributes) => void;
 }) {
+  const [newKey, setNewKey] = useState("");
+  const [newValue, setNewValue] = useState("");
+
   const set = (key: string, value: unknown) =>
     onChange({ ...(attributes as Record<string, unknown>), [key]: value } as ProductAttributes);
+
+  const removeCustom = (key: string) => {
+    const updated = { ...(attributes as Record<string, unknown>) };
+    delete updated[key];
+    onChange(updated as ProductAttributes);
+  };
+
+  const handleAddCustom = () => {
+    if (newKey.trim() && !(attributes as Record<string, unknown>)[newKey.trim()]) {
+      set(newKey.trim(), newValue);
+      setNewKey("");
+      setNewValue("");
+    }
+  };
 
   const numField = (label: string, key: string, value: number, step = 1) => (
     <div className="flex flex-col gap-1.5" key={key}>
@@ -125,119 +147,184 @@ function AttributesForm({
     </div>
   );
 
-  switch (type) {
-    case "CPU": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "CPU" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {grid2(<>{txtField("Socket", "socket", a.socket)}{numField("Cores", "cores", a.cores)}</>)}
-          {grid2(<>{numField("Threads", "threads", a.threads)}{numField("Base Clock (GHz)", "baseClock", a.baseClock, 0.1)}</>)}
-          {grid2(<>{numField("Boost Clock (GHz)", "boostClock", a.boostClock, 0.1)}{numField("TDP (W)", "tdp", a.tdp)}</>)}
-          {boolField("Integrated Graphics", "integratedGraphics", a.integratedGraphics)}
-        </div>
-      );
-    }
-    case "Mainboard": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "Mainboard" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {grid2(<>{txtField("Socket", "socket", a.socket)}{txtField("Chipset", "chipset", a.chipset)}</>)}
-          {grid2(<>
-            {selField("Form Factor", "formFactor", a.formFactor, ["ATX", "Micro-ATX", "Mini-ITX", "E-ATX"])}
+  const standardKeys = Object.keys(defaultAttributes(type as ProductCategory));
+  const customKeys = Object.keys(attributes).filter(k => !standardKeys.includes(k) && k !== "componentType");
+
+  const renderSpecifics = () => {
+    switch (type) {
+      case "CPU": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "CPU" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {grid2(<>{txtField("Socket", "socket", a.socket)}{numField("Cores", "cores", a.cores)}</>)}
+            {grid2(<>{numField("Threads", "threads", a.threads)}{numField("Base Clock (GHz)", "baseClock", a.baseClock, 0.1)}</>)}
+            {grid2(<>{numField("Boost Clock (GHz)", "boostClock", a.boostClock, 0.1)}{numField("TDP (W)", "tdp", a.tdp)}</>)}
+            {boolField("Integrated Graphics", "integratedGraphics", a.integratedGraphics)}
+          </div>
+        );
+      }
+      case "Mainboard": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "Mainboard" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {grid2(<>{txtField("Socket", "socket", a.socket)}{txtField("Chipset", "chipset", a.chipset)}</>)}
+            {grid2(<>
+              {selField("Form Factor", "formFactor", a.formFactor, ["ATX", "Micro-ATX", "Mini-ITX", "E-ATX"])}
+              {selField("Memory Type", "memoryType", a.memoryType, ["DDR4", "DDR5"])}
+            </>)}
+            {grid2(<>{numField("RAM Slots", "ramSlots", a.ramSlots)}{boolField("Has Wi-Fi", "hasWifi", a.hasWifi)}</>)}
+          </div>
+        );
+      }
+      case "RAM": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "RAM" }>;
+        return (
+          <div className="flex flex-col gap-4">
             {selField("Memory Type", "memoryType", a.memoryType, ["DDR4", "DDR5"])}
-          </>)}
-          {grid2(<>{numField("RAM Slots", "ramSlots", a.ramSlots)}{boolField("Has Wi-Fi", "hasWifi", a.hasWifi)}</>)}
-        </div>
-      );
+            {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Modules", "modules", a.modules)}</>)}
+            {grid2(<>{numField("Speed (MHz)", "speed", a.speed)}{numField("CAS Latency", "casLatency", a.casLatency)}</>)}
+          </div>
+        );
+      }
+      case "GPU": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "GPU" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {txtField("Chipset", "chipset", a.chipset)}
+            {grid2(<>{numField("VRAM (GB)", "vram", a.vram)}{numField("Card Length (mm)", "length", a.length)}</>)}
+            {numField("Recommended PSU (W)", "recommendedPsu", a.recommendedPsu)}
+          </div>
+        );
+      }
+      case "SSD": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "SSD" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {grid2(<>
+              {selField("Form Factor", "formFactor", a.formFactor, ["M.2 2280", "2.5 inch", "PCIe Add-in Card"])}
+              {selField("Interface", "interface", a.interface, ["PCIe 5.0 x4", "PCIe 4.0 x4", "PCIe 3.0 x4", "SATA III"])}
+            </>)}
+            {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Read Speed (MB/s)", "readSpeed", a.readSpeed)}</>)}
+            {numField("Write Speed (MB/s)", "writeSpeed", a.writeSpeed)}
+          </div>
+        );
+      }
+      case "HDD": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "HDD" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {grid2(<>
+              {selField("Form Factor", "formFactor", a.formFactor, ["3.5 inch", "2.5 inch"])}
+              {selField("RPM", "rpm", String(a.rpm), ["5400", "7200"])}
+            </>)}
+            {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Cache (MB)", "cache", a.cache)}</>)}
+          </div>
+        );
+      }
+      case "PSU": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "PSU" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {numField("Wattage (W)", "wattage", a.wattage)}
+            {grid2(<>
+              {selField("Efficiency", "efficiency", a.efficiency, ["80+ Titanium", "80+ Platinum", "80+ Gold", "80+ Bronze", "80+ Standard"])}
+              {selField("Modularity", "modularity", a.modularity, ["Full", "Semi", "Non"])}
+            </>)}
+            {selField("Form Factor", "formFactor", a.formFactor, ["ATX", "SFX", "SFX-L"])}
+          </div>
+        );
+      }
+      case "Case": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "Case" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {selField("Form Factor", "formFactor", a.formFactor, ["Full Tower", "Mid Tower", "Mini ITX"])}
+            {arrField("Motherboard Support", "motherboardSupport", a.motherboardSupport)}
+            {grid2(<>{numField("Max GPU Length (mm)", "maxGpuLength", a.maxGpuLength)}{numField("Max CPU Cooler Height (mm)", "maxCpuCoolerHeight", a.maxCpuCoolerHeight)}</>)}
+          </div>
+        );
+      }
+      case "CPU Cooler": {
+        const a = attributes as Extract<ProductAttributes, { componentType: "CPU Cooler" }>;
+        return (
+          <div className="flex flex-col gap-4">
+            {selField("Type", "type", a.type, ["Air Cooler", "Liquid Cooler"])}
+            {arrField("Socket Support", "socketSupport", a.socketSupport)}
+            {a.type === "Air Cooler"
+              ? numField("Height (mm)", "height", a.height ?? 0)
+              : selField("Radiator Size (mm)", "radiatorSize", String(a.radiatorSize ?? 240), ["120", "240", "280", "360", "420"])
+            }
+          </div>
+        );
+      }
+      default: return null;
     }
-    case "RAM": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "RAM" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {selField("Memory Type", "memoryType", a.memoryType, ["DDR4", "DDR5"])}
-          {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Modules", "modules", a.modules)}</>)}
-          {grid2(<>{numField("Speed (MHz)", "speed", a.speed)}{numField("CAS Latency", "casLatency", a.casLatency)}</>)}
+  };
+
+  return (
+    <div className="flex flex-col">
+      {renderSpecifics()}
+      
+      {/* Custom attributes section */}
+      <div className="mt-6 pt-5 border-t border-white/[0.06]">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-4">
+          Additional Specifications
+        </p>
+        <div className="flex flex-col gap-3">
+          {customKeys.map(k => (
+            <div key={k} className="flex gap-2 items-center">
+              <input 
+                className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/50 w-1/3" 
+                value={k} 
+                disabled 
+              />
+              <input 
+                className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 flex-1 focus:outline-none focus:border-red-500/50" 
+                value={String((attributes as Record<string, unknown>)[k])} 
+                onChange={(e) => set(k, e.target.value)} 
+              />
+              <button 
+                type="button"
+                className="p-2 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                onClick={() => removeCustom(k)}
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+          <div className="flex gap-2 items-center mt-1">
+            <input 
+              className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 w-1/3 focus:outline-none focus:border-red-500/50" 
+              placeholder="e.g. RGB" 
+              value={newKey}
+              onChange={(e) => setNewKey(e.target.value)}
+            />
+            <input 
+              className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 flex-1 focus:outline-none focus:border-red-500/50" 
+              placeholder="e.g. Yes" 
+              value={newValue}
+              onChange={(e) => setNewValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustom())}
+            />
+            <button 
+              type="button"
+              className="flex items-center justify-center p-2 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-white/5"
+              onClick={(e) => { e.preventDefault(); handleAddCustom(); }}
+              disabled={!newKey.trim()}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
         </div>
-      );
-    }
-    case "GPU": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "GPU" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {txtField("Chipset", "chipset", a.chipset)}
-          {grid2(<>{numField("VRAM (GB)", "vram", a.vram)}{numField("Card Length (mm)", "length", a.length)}</>)}
-          {numField("Recommended PSU (W)", "recommendedPsu", a.recommendedPsu)}
-        </div>
-      );
-    }
-    case "SSD": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "SSD" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {grid2(<>
-            {selField("Form Factor", "formFactor", a.formFactor, ["M.2 2280", "2.5 inch", "PCIe Add-in Card"])}
-            {selField("Interface", "interface", a.interface, ["PCIe 5.0 x4", "PCIe 4.0 x4", "PCIe 3.0 x4", "SATA III"])}
-          </>)}
-          {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Read Speed (MB/s)", "readSpeed", a.readSpeed)}</>)}
-          {numField("Write Speed (MB/s)", "writeSpeed", a.writeSpeed)}
-        </div>
-      );
-    }
-    case "HDD": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "HDD" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {grid2(<>
-            {selField("Form Factor", "formFactor", a.formFactor, ["3.5 inch", "2.5 inch"])}
-            {selField("RPM", "rpm", String(a.rpm), ["5400", "7200"])}
-          </>)}
-          {grid2(<>{numField("Capacity (GB)", "capacity", a.capacity)}{numField("Cache (MB)", "cache", a.cache)}</>)}
-        </div>
-      );
-    }
-    case "PSU": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "PSU" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {numField("Wattage (W)", "wattage", a.wattage)}
-          {grid2(<>
-            {selField("Efficiency", "efficiency", a.efficiency, ["80+ Titanium", "80+ Platinum", "80+ Gold", "80+ Bronze", "80+ Standard"])}
-            {selField("Modularity", "modularity", a.modularity, ["Full", "Semi", "Non"])}
-          </>)}
-          {selField("Form Factor", "formFactor", a.formFactor, ["ATX", "SFX", "SFX-L"])}
-        </div>
-      );
-    }
-    case "Case": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "Case" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {selField("Form Factor", "formFactor", a.formFactor, ["Full Tower", "Mid Tower", "Mini ITX"])}
-          {arrField("Motherboard Support", "motherboardSupport", a.motherboardSupport)}
-          {grid2(<>{numField("Max GPU Length (mm)", "maxGpuLength", a.maxGpuLength)}{numField("Max CPU Cooler Height (mm)", "maxCpuCoolerHeight", a.maxCpuCoolerHeight)}</>)}
-        </div>
-      );
-    }
-    case "CPU Cooler": {
-      const a = attributes as Extract<ProductAttributes, { componentType: "CPU Cooler" }>;
-      return (
-        <div className="flex flex-col gap-4">
-          {selField("Type", "type", a.type, ["Air Cooler", "Liquid Cooler"])}
-          {arrField("Socket Support", "socketSupport", a.socketSupport)}
-          {a.type === "Air Cooler"
-            ? numField("Height (mm)", "height", a.height ?? 0)
-            : selField("Radiator Size (mm)", "radiatorSize", String(a.radiatorSize ?? 240), ["120", "240", "280", "360", "420"])
-          }
-        </div>
-      );
-    }
-    default: return null;
-  }
+      </div>
+    </div>
+  );
 }
 
 // ─── Main Component ────────────────────────────────────────────
 export default function ProductManagement() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<
     | { mode: "create" }
     | { mode: "edit"; product: Product }
@@ -246,6 +333,25 @@ export default function ProductManagement() {
   >(null);
   const [form, setForm] = useState<ProductForm>(emptyForm());
   const [submitting, setSubmitting] = useState(false);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/products`);
+      if (res.ok) {
+        const data = await res.json();
+        setProducts(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   // ── Handlers ──────────────────────────────────────────────
   const openCreate = () => {
@@ -259,7 +365,8 @@ export default function ProductManagement() {
       category: p.category,
       price: p.price,
       description: p.description ?? "",
-      imageUrl: p.imageUrl ?? "",
+      image: null,
+      existingImageUrl: p.imageUrl,
       stock: p.stock,
       attributes: p.attributes,
     });
@@ -275,41 +382,86 @@ export default function ProductManagement() {
 
   const handleSave = async () => {
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 400));
 
-    if (modal?.mode === "create") {
-      const newProduct: Product = {
-        ...form,
-        id: Date.now(),
-        description: form.description || null,
-        imageUrl: form.imageUrl || null,
-      };
-      setProducts((prev) => [newProduct, ...prev]);
-    } else if (modal?.mode === "edit") {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === modal.product.id
-            ? { ...p, ...form, description: form.description || null, imageUrl: form.imageUrl || null }
-            : p,
-        ),
-      );
+    try {
+      if (modal?.mode === "create") {
+        const formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("category", form.category);
+        formData.append("price", String(form.price));
+        formData.append("stock", String(form.stock));
+        formData.append("description", form.description || "");
+        formData.append("attributes", JSON.stringify(form.attributes));
+        
+        if (form.image) {
+          formData.append("image", form.image);
+        }
+
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/products`, {
+          method: "POST",
+          body: formData,
+          credentials: "omit",
+        });
+
+        if (res.ok) {
+          fetchProducts();
+          closeModal();
+        } else {
+          console.error("Failed to add product");
+        }
+      } else if (modal?.mode === "edit") {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/products/${modal.product.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "omit",
+          body: JSON.stringify({
+            name: form.name,
+            category: form.category,
+            price: form.price,
+            stock: form.stock,
+            description: form.description || "",
+            attributes: form.attributes,
+          }),
+        });
+
+        if (res.ok) {
+          fetchProducts();
+          closeModal();
+        } else {
+          console.error("Failed to update product");
+        }
+      }
+    } catch (err) {
+      console.error("Error saving product:", err);
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
-    closeModal();
   };
 
   const handleDelete = async () => {
     if (modal?.mode !== "delete") return;
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 300));
-    setProducts((prev) => prev.filter((p) => p.id !== modal.product.id));
-    setSubmitting(false);
-    closeModal();
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/products/${modal.product.id}`, {
+        method: "DELETE",
+        credentials: "omit",
+      });
+
+      if (res.ok) {
+        fetchProducts();
+        closeModal();
+      } else {
+        console.error("Failed to delete product");
+      }
+    } catch (err) {
+      console.error("Error deleting product:", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const field = (
-    key: keyof Omit<ProductForm, "attributes" | "category">,
+    key: keyof Omit<ProductForm, "attributes" | "category" | "image" | "existingImageUrl">,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const val = e.target.value;
@@ -342,7 +494,11 @@ export default function ProductManagement() {
 
       {/* Table */}
       <div className="bg-[#161616] border border-white/[0.06] rounded-xl overflow-hidden">
-        {products.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+            <p className="text-sm font-medium text-white/70">Loading products...</p>
+          </div>
+        ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
             <Package size={40} className="text-white/10 mb-4" aria-hidden="true" />
             <p className="text-sm font-medium text-white/70 mb-1">No products yet</p>
@@ -374,8 +530,8 @@ export default function ProductManagement() {
                     p.stock === 0
                       ? { label: "Out of stock", cls: "bg-red-500/10 text-red-400" }
                       : p.stock <= 5
-                        ? { label: "Low stock",    cls: "bg-amber-500/10 text-amber-400" }
-                        : { label: "In stock",     cls: "bg-emerald-500/10 text-emerald-400" };
+                        ? { label: "Low stock", cls: "bg-amber-500/10 text-amber-400" }
+                        : { label: "In stock", cls: "bg-emerald-500/10 text-emerald-400" };
                   return (
                     <tr key={p.id} className="border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors">
                       <td className="px-6 py-4">
@@ -529,13 +685,25 @@ export default function ProductManagement() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-white/50" htmlFor="pm-img">Image URL</label>
+                <label className="text-xs font-medium text-white/50" htmlFor="pm-img">Image</label>
+                {(form.image || form.existingImageUrl) && (
+                  <div className="w-20 h-20 bg-white/5 rounded-lg overflow-hidden border border-white/10 mb-1">
+                    <img 
+                      src={form.image ? URL.createObjectURL(form.image) : (form.existingImageUrl || "")} 
+                      alt="Preview" 
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                )}
                 <input
                   id="pm-img"
-                  className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors"
-                  value={form.imageUrl ?? ""}
-                  onChange={(e) => field("imageUrl", e)}
-                  placeholder="https://..."
+                  type="file"
+                  accept="image/*"
+                  className="bg-[#0a0a0a] border border-white/10 rounded-lg px-3 py-2 text-sm text-white/70 focus:outline-none focus:border-red-500/50 hover:border-white/20 transition-colors file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer"
+                  onChange={(e) => {
+                    const selectedFile = e.target.files?.[0] || null;
+                    setForm(f => ({ ...f, image: selectedFile }));
+                  }}
                 />
               </div>
 

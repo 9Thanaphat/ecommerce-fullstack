@@ -23,7 +23,7 @@ export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/users/verify-otp`, {
+      const response = await fetch(`${apiUrl}/auth/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
     setIsSubmitting(true);
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/users/resend-otp`, {
+      const response = await fetch(`${apiUrl}/auth/resend-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

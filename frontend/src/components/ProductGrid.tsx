@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../App.css";
 import ProductCard from "./ProductCard";
 
-import { mockProducts, type Product } from "../mockProduct";
+import type { Product } from "../types/product";
 
 interface ProductGridProps {
   search: string;
@@ -15,22 +15,16 @@ export default function ProductGrid({search}: ProductGridProps) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // const apiUrl = import.meta.env.VITE_API_URL;
-        // const response = await fetch(`${apiUrl}/products`);
+        const apiUrl = import.meta.env.VITE_API_URL;
+        const response = await fetch(`${apiUrl}/products`);
 
-        // // Check if the response is successful
-        // if (!response.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-        // const data = await response.json();
-        // setProducts(data);
-        // setLoading(false);
-
-        setTimeout(() => {
-          setProducts(mockProducts);
-          setLoading(false);
-        }, 500);
+        const data = await response.json();
+        setProducts(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
         setLoading(false);

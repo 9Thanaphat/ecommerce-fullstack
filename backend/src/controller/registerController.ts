@@ -185,6 +185,8 @@ export const resendOtp = async (body: ResendOtpBody) => {
       expiresAt: expireTime,
     });
 
+    console.log(otpCode);
+
     // Send OTP email to the user
     const mailOptions = {
       from: `"Ecommerce" <${process.env.GMAIL_USER}>`,

@@ -1,6 +1,6 @@
 import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { Product } from "../mockProduct";
+import type { Product } from "../types/product";
 
 interface ProductCardProps {
   product: Product;

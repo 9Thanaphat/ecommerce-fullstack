@@ -1,12 +1,6 @@
 import { Package, ShoppingBag, DollarSign, AlertTriangle } from "lucide-react";
-import { mockProducts } from "../../mockProduct";
-
-const totalProducts = mockProducts.length;
-const lowStock = mockProducts.filter((p) => p.stock <= 5).length;
-const totalRevenue = mockProducts.reduce(
-  (sum, p) => sum + p.price * (Math.floor(Math.random() * 8) + 1),
-  0,
-);
+import { useState, useEffect } from "react";
+import type { Product } from "../../types/product";
 
 const mockRecentOrders = [
   { id: "ORD-001", customer: "Thanaphat S.",  status: "delivered", total: 7350,  date: "2026-06-02" },
@@ -23,14 +17,30 @@ const statusStyle: Record<string, string> = {
   cancelled: "bg-red-500/10 text-red-400",
 };
 
-const stats = [
-  { label: "Total Products", value: totalProducts,                      meta: `${lowStock} low stock`,        icon: Package },
-  { label: "Total Orders",   value: mockRecentOrders.length,            meta: "last 30 days",                 icon: ShoppingBag },
-  { label: "Revenue",        value: `฿${(totalRevenue / 1000).toFixed(1)}k`, meta: "estimated",             icon: DollarSign },
-  { label: "Low Stock",      value: lowStock,                           meta: "items need restocking",        icon: AlertTriangle },
-];
-
 export default function Dashboard() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
+      .then((res) => res.json())
+      .then(setProducts)
+      .catch((err) => console.error("Failed to fetch products for dashboard:", err));
+  }, []);
+
+  const totalProducts = products.length;
+  const lowStock = products.filter((p) => p.stock <= 5).length;
+  const totalRevenue = products.reduce(
+    (sum, p) => sum + p.price * (Math.floor(Math.random() * 8) + 1),
+    0,
+  );
+
+  const stats = [
+    { label: "Total Products", value: totalProducts,                      meta: `${lowStock} low stock`,        icon: Package },
+    { label: "Total Orders",   value: mockRecentOrders.length,            meta: "last 30 days",                 icon: ShoppingBag },
+    { label: "Revenue",        value: `฿${(totalRevenue / 1000).toFixed(1)}k`, meta: "estimated",             icon: DollarSign },
+    { label: "Low Stock",      value: lowStock,                           meta: "items need restocking",        icon: AlertTriangle },
+  ];
+
   return (
     <div className="p-8 max-w-5xl">
       {/* Header */}

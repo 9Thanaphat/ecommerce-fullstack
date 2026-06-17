@@ -3,7 +3,7 @@ import SideBar from "../components/SideBar";
 import ProductGrid from "../components/ProductGrid";
 import Footer from "../components/Footer";
 import { useState } from "react";
-import type { ProductCategory } from "../mockProduct";
+import type { ProductCategory } from "../types/product";
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 50000;

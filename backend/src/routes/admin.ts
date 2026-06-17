@@ -101,19 +101,22 @@ const cpuCoolerAttributes = t.Object({
 });
 
 
-const addProductBody = t.Union([
-  t.Object({ ...baseProductBody, category: t.Literal("CPU"), attributes: cpuAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("Mainboard"), attributes: mainboardAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("RAM"), attributes: ramAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("GPU"), attributes: gpuAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("SSD"), attributes: ssdAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("HDD"), attributes: hddAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("PSU"), attributes: psuAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("Case"), attributes: caseAttributes }),
-  t.Object({ ...baseProductBody, category: t.Literal("CPU Cooler"), attributes: cpuCoolerAttributes }),
-]);
+const addProductBody = t.Object({
+  name: t.String(),
+  category: t.String(),
+  description: t.String(),
+  price: t.Numeric(),
+  stock: t.Numeric(),
+  image: t.Optional(t.File()),
+  attributes: t.Any(),
+});
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
+  .onError(({ code, error }) => {
+    if (code === 'VALIDATION') {
+      console.error("Validation Error:", error.all);
+    }
+  })
   .use(
     cors({
       origin: frontendUrl,
