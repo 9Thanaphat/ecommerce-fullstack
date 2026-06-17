@@ -1,4 +1,4 @@
-# Elysia E-Commerce
+# E-Commerce
 
 ![Tech Stack](https://img.shields.io/badge/Bun-1.x-black?logo=bun)
 ![Tech Stack](https://img.shields.io/badge/ElysiaJS-1.x-purple?logo=javascript)
@@ -67,12 +67,6 @@ Full-stack e-commerce application built as a personal learning project to practi
 - Custom dynamic product attributes support
 - `POST /auth/register`, `POST /auth/verify-otp`, `POST /auth/resend-otp`
 - `POST /auth/login`, `GET /auth/check-auth`
-
-**Design System**
-- OKLCH color palette (near-black surface, oxidized-crimson accent)
-- CSS custom property tokens for spacing, radius, shadow, motion
-- Reusable component classes: `.btn`, `.badge`, `.modal`, `.data-table`, `.skeleton`, `.form-input`
-- Reduced-motion media query support
 
 ### 🚧 In Progress
 
