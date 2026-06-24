@@ -14,8 +14,6 @@
 
 Full-stack e-commerce application built as a personal learning project to practice modern TypeScript full-stack development. The focus is on production-grade patterns: type-safe database access, secure authentication, and a principled design system — not just getting something to run.
 
-**Design philosophy:** Dark, minimal, precise. The UI is built around a custom design system using OKLCH color tokens, not ad-hoc utility classes.
-
 ---
 
 ## Tech Stack
