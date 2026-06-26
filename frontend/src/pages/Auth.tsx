@@ -4,69 +4,91 @@ import RegisterForm from "../components/auth/RegisterForm";
 import OtpForm from "../components/auth/OtpForm";
 import { useNavigate } from "react-router-dom";
 
+type View = "login" | "register" | "otp";
+
 export default function Auth() {
-  const [currentView, setCurrentView] = useState("login");
+  const [view, setView] = useState<View>("login");
   const [registeredEmail, setRegisteredEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        console.log("Checking authentication...");
-        const apiUrl = import.meta.env.VITE_API_URL;
-        const response = await fetch(`${apiUrl}/auth/check-auth`, {
-          method: "GET",
-          credentials: "include", // Include cookies for authentication
-        });
-
-        const data = await response.json();
-        if (response.ok && data.authenticated) {
-          console.log("User is authenticated, redirecting to home page...");
-          navigate("/");
-        } else {
-          console.log("User is not authenticated, showing login page...");
-          setIsLoading(false);
-        }
-      } catch (error) {
-        setIsLoading(false);
-      }
-    };
-    checkAuth();
+    const apiUrl = import.meta.env.VITE_API_URL;
+    fetch(`${apiUrl}/auth/check-auth`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.authenticated) navigate("/");
+        else setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-300">
-        <h1 className="text-xl font-bold animate-pulse">
-          Checking authentication...
-        </h1>
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="w-6 h-6 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
+  const titles: Record<View, { heading: string; sub: string }> = {
+    login:    { heading: "ยินดีต้อนรับกลับ",    sub: "เข้าสู่ระบบ" },
+    register: { heading: "สร้างบัญชีใหม่",       sub: "" },
+    otp:      { heading: "ยืนยันอีเมล",           sub: `กรอกรหัส 6 หลักที่ส่งไปยัง ${registeredEmail}` },
+  };
+
   return (
-    <div className="p-8 flex flex-col gap-y-4 bg-gray-300 min-h-screen">
-      <h1 className="text-3xl font-bold">Authentication 🔐</h1>
-      {currentView === "login" && (
-        <LoginForm onSwitchToRegister={() => setCurrentView("register")} />
-      )}
-      {currentView === "register" && (
-        <RegisterForm
-          onSwitchToLogin={() => setCurrentView("login")}
-          onSwitchToOtp={(email) => {
-            setRegisteredEmail(email);
-            setCurrentView("otp");
-          }}
-        />
-      )}
-      {currentView === "otp" && (
-        <OtpForm
-          email={registeredEmail}
-          onSwitchToLogin={() => setCurrentView("login")}
-        />
-      )}
+    <div className="min-h-screen flex">
+      {/* Brand panel — desktop only */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gray-900 text-white flex-col justify-between p-14">
+        <button onClick={() => navigate("/")} className="text-xl font-bold tracking-widest">
+          BOSS IT
+        </button>
+        <p className="text-gray-600 text-xs">© 2025 BOSS IT. All rights reserved.</p>
+      </div>
+
+      {/* Form panel */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
+        {/* Mobile brand */}
+        <button
+          onClick={() => navigate("/")}
+          className="lg:hidden text-lg font-bold tracking-widest mb-10"
+        >
+          BOSS IT
+        </button>
+
+        <div className="w-full max-w-sm">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">{titles[view].heading}</h1>
+            <p className="text-sm text-gray-500">{titles[view].sub}</p>
+          </div>
+
+          {view === "login" && (
+            <LoginForm
+              onSwitchToRegister={() => setView("register")}
+              onSwitchToOtp={(email) => {
+                setRegisteredEmail(email);
+                setView("otp");
+              }}
+            />
+          )}
+          {view === "register" && (
+            <RegisterForm
+              onSwitchToLogin={() => setView("login")}
+              onSwitchToOtp={(email) => {
+                setRegisteredEmail(email);
+                setView("otp");
+              }}
+            />
+          )}
+          {view === "otp" && (
+            <OtpForm
+              email={registeredEmail}
+              onSwitchToLogin={() => setView("login")}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

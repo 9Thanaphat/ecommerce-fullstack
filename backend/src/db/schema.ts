@@ -103,6 +103,7 @@ export const products = pgTable("products", {
   description: text("description").notNull(),
   price: integer("price").notNull(),
   imageUrl: text("image_url").notNull(),
+  imageUrls: jsonb("image_urls").$type<string[]>().default([]).notNull(),
   stock: integer("stock").notNull(),
   attributes: jsonb("attributes").$type<ProductAttributes>().default({}).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -122,6 +123,15 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash").notNull(),
   role: text("role").notNull().default("customer"), // "customer" | "admin"
   isVerified: boolean("is_verified").default(false).notNull(),
+  // profile
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  phone: text("phone"),
+  address: text("address"),
+  subdistrict: text("subdistrict"),
+  city: text("city"),
+  province: text("province"),
+  postalCode: text("postal_code"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -135,4 +145,43 @@ export const otps = pgTable("otps", {
   otp: text("otp").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const cartItems = pgTable("cart_items", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  productId: integer("product_id").notNull(),
+  quantity: integer("quantity").notNull().default(1),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+export type CartItem = InferSelectModel<typeof cartItems>;
+
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  totalAmount: integer("total_amount").notNull(),
+  status: text("status").notNull().default("confirmed"),
+  shippingFirstName: text("shipping_first_name"),
+  shippingLastName: text("shipping_last_name"),
+  shippingPhone: text("shipping_phone"),
+  shippingAddress: text("shipping_address"),
+  shippingSubdistrict: text("shipping_subdistrict"),
+  shippingCity: text("shipping_city"),
+  shippingProvince: text("shipping_province"),
+  shippingPostalCode: text("shipping_postal_code"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull(),
+  productId: integer("product_id").notNull(),
+  productName: text("product_name").notNull(),
+  price: integer("price").notNull(),
+  quantity: integer("quantity").notNull(),
 });

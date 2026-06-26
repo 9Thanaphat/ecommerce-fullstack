@@ -2,6 +2,8 @@ import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { cors } from "@elysiajs/cors";
 import { addProduct, updateProduct, deleteProduct } from "../controller/productController";
+import { getAdminOrders, getOrderItems, updateOrderStatus } from "../controller/adminOrderController";
+import { getDashboardStats, getAdminUsers } from "../controller/adminDashboardController";
 import { requireAdmin } from "../middleware/authMiddleware";
 
 const frontendUrl = Bun.env.FRONTEND_URL;
@@ -107,7 +109,7 @@ const addProductBody = t.Object({
   description: t.String(),
   price: t.Numeric(),
   stock: t.Numeric(),
-  image: t.Optional(t.File()),
+  images: t.Optional(t.Files()),
   attributes: t.Any(),
 });
 
@@ -126,6 +128,10 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
   .use(jwt({ name: "jwt", secret: Bun.env.JWT_SECRET! }))
   .use(requireAdmin)
 
+  .get("/dashboard", () => getDashboardStats())
+
+  .get("/users", () => getAdminUsers())
+
   .group("/products", (group) =>
     group
       .post("/", addProduct, {
@@ -135,19 +141,35 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
         params: t.Object({
           id: t.Numeric(),
         }),
-        body: t.Partial(
-          t.Object({
-            name: t.String(),
-            description: t.String(),
-            price: t.Integer(),
-            imageUrl: t.String(),
-            stock: t.Integer(),
-          })
-        ),
+        body: t.Object({
+          name: t.Optional(t.String()),
+          description: t.Optional(t.String()),
+          price: t.Optional(t.Numeric()),
+          stock: t.Optional(t.Numeric()),
+          images: t.Optional(t.Files()),
+          keepImageUrls: t.Optional(t.String()),
+          attributes: t.Optional(t.Any()),
+        }),
       })
       .delete("/:id", deleteProduct, {
         params: t.Object({
           id: t.Numeric(),
         }),
       })
+  )
+
+  .group("/orders", (group) =>
+    group
+      .get("/", () => getAdminOrders())
+      .get("/:id/items", ({ params }) => getOrderItems(Number(params.id)), {
+        params: t.Object({ id: t.Numeric() }),
+      })
+      .patch(
+        "/:id/status",
+        ({ params, body }) => updateOrderStatus(Number(params.id), body.status),
+        {
+          params: t.Object({ id: t.Numeric() }),
+          body: t.Object({ status: t.String() }),
+        }
+      )
   );

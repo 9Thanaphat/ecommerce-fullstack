@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Swal from "sweetalert2";
+import { Loader2, MailCheck } from "lucide-react";
+import { toast } from "sonner";
 
 interface OtpFormProps {
   email: string;
@@ -8,105 +9,127 @@ interface OtpFormProps {
 
 export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
   const [otp, setOtp] = useState("");
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const onlyNumbers = e.target.value.replace(/[^0-9]/g, "");
+    const onlyNumbers = e.target.value.replace(/[^0-9]/g, "").slice(0, 6);
     setOtp(onlyNumbers);
   };
 
-  const handleVerifyOtp = async () => {
+  const handleVerify = async () => {
     setError(null);
     setIsSubmitting(true);
-
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/auth/verify-otp`, {
+      const res = await fetch(`${apiUrl}/auth/verify-otp`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
       });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        // OTP verified successfully, you can redirect the user or show a success message
-        Swal.fire("Success", "OTP verified successfully! You can now log in.", "success");
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("ยืนยันอีเมลสำเร็จ", { description: "เข้าสู่ระบบได้เลย" });
         onSwitchToLogin();
       } else {
-        setError(data.message || "OTP verification failed");
+        setError(data.message || "รหัส OTP ไม่ถูกต้อง");
       }
-    } catch (error) {
-      console.error("Error during OTP verification:", error);
-      setError("An error occurred while verifying the OTP.");
+    } catch {
+      setError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleResendOtp = async () => {
+  const handleResend = async () => {
     setError(null);
     setIsSubmitting(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/auth/resend-otp`, {
+      const res = await fetch(`${apiUrl}/auth/resend-otp`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        Swal.fire("Success", "OTP resent successfully! Please check your email.", "success");
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("ส่งรหัสใหม่แล้ว", { description: "กรุณาตรวจสอบอีเมล" });
       } else {
-        setError(data.message || "Failed to resend OTP");
+        setError(data.message || "ส่งรหัสไม่สำเร็จ");
       }
-    } catch (error) {
-      console.error("Error during OTP resend:", error);
-      setError("An error occurred while resending the OTP.");
+    } catch {
+      setError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="p-8 flex flex-col gap-y-4 bg-white rounded shadow-md w-full max-w-md mx-auto">
-      <h2>OTP Verification</h2>
-      <p className="text-gray-600">An OTP has been sent to {email}</p>
-      <input
-        type="text"
-        maxLength={6}
-        className="border border-gray-300 rounded py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="Enter OTP"
-        value={otp}
-        onChange={handleOtpChange}
-      />
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {isSubmitting && <p className="text-sm text-blue-500">Verifying...</p>}
+    <div className="flex flex-col gap-6">
+      {/* Email hint */}
+      <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl p-4">
+        <MailCheck size={20} className="text-gray-400 flex-shrink-0" />
+        <p className="text-sm text-gray-600">
+          ส่งรหัสไปยัง <span className="font-semibold text-gray-900">{email}</span>
+        </p>
+      </div>
+
+      {/* OTP input */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-700">รหัส OTP (6 หลัก)</label>
+        <input
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
+          value={otp}
+          onChange={handleOtpChange}
+          onKeyDown={(e) => e.key === "Enter" && otp.length === 6 && handleVerify()}
+          placeholder="000000"
+          className="w-full border border-gray-200 rounded-lg px-4 py-3 text-center text-2xl font-bold tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+        />
+        <div className="flex justify-between mt-1">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-0.5 flex-1 mx-0.5 rounded-full transition-colors ${
+                i < otp.length ? "bg-gray-900" : "bg-gray-200"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          {error}
+        </p>
+      )}
+
+      {/* Verify */}
       <button
-        className="bg-blue-500 text-white py-2 px-4 rounded transition-colors hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        disabled={otp.length !== 6}
-        onClick={handleVerifyOtp}
+        onClick={handleVerify}
+        disabled={otp.length !== 6 || isSubmitting}
+        className="w-full bg-gray-900 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        Verify OTP
+        {isSubmitting && <Loader2 size={15} className="animate-spin" />}
+        ยืนยันรหัส OTP
       </button>
-      <button
-        onClick={handleResendOtp}
-        disabled={isSubmitting}
-        className="text-sm text-gray-500 hover:text-black hover:underline mt-2"
-      >
-        Didn't receive code? Resend
-      </button>
-      <button
-          onClick={onSwitchToLogin}
-          className="text-sm text-gray-500 hover:text-black hover:underline transition-colors"
+
+      <div className="flex items-center justify-between text-sm">
+        <button
+          onClick={handleResend}
+          disabled={isSubmitting}
+          className="text-gray-500 hover:text-gray-900 hover:underline transition disabled:opacity-40"
         >
-          ← Back to Login
+          ไม่ได้รับรหัส? ส่งใหม่
         </button>
+        <button
+          onClick={onSwitchToLogin}
+          className="text-gray-500 hover:text-gray-900 hover:underline transition"
+        >
+          ← กลับไปหน้า Login
+        </button>
+      </div>
     </div>
   );
 }

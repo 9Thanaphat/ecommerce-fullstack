@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Cpu, CircuitBoard, Monitor, MemoryStick, HardDrive, Zap } from "lucide-react";
+import ProductCard from "../components/ProductCard";
 import { useState, useEffect } from "react";
 import type { Product } from "../types/product";
 
@@ -34,9 +35,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold text-gray-900 leading-tight max-w-xl">
             Build your perfect PC
           </h1>
-          <p className="text-gray-400 max-w-md text-sm leading-relaxed">
-            CPU, GPU, RAM, SSD และอีกมากมาย — คัดเลือกชิ้นส่วนคุณภาพสำหรับ build ของคุณ
-          </p>
+
           <div className="flex items-center gap-3 mt-2">
             <Link
               to="/products"
@@ -93,27 +92,7 @@ export default function Home() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {featured.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
-              >
-                <div className="bg-gray-50 aspect-square flex items-center justify-center p-4">
-                  <img
-                    src={product.imageUrl || undefined}
-                    alt={product.name}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-4">
-                  <p className="text-xs text-gray-400 mb-1">{product.category}</p>
-                  <p className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 mb-2">
-                    {product.name}
-                  </p>
-                  <p className="text-sm font-bold text-gray-900">
-                    ฿{product.price.toLocaleString()}
-                  </p>
-                </div>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </section>

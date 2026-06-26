@@ -1,7 +1,10 @@
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingCart, Package } from "lucide-react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, ShoppingCart, Package, ImageOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { Product, ProductAttributes } from "../types/product";
+import { useCart } from "../context/CartContext";
+import { toast } from "sonner";
+import ProductCard from "../components/ProductCard";
 
 // ─── Attribute renderers per componentType ────────────────────
 function SpecRow({ label, value }: { label: string; value: React.ReactNode }) {
@@ -114,7 +117,19 @@ function Specs({ attrs }: { attrs: ProductAttributes }) {
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
+  const [selectedImg, setSelectedImg] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+
+  const handleAdd = async () => {
+    if (!product) return;
+    const result = await addToCart(product);
+    if (result === "auth_required") navigate("/auth");
+    else if (result === "ok") toast.success("เพิ่มลงตะกร้าแล้ว", { description: product.name });
+    else toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่");
+  };
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/products`)
@@ -122,6 +137,12 @@ export default function ProductDetail() {
       .then((data: Product[]) => {
         const found = data.find((p) => p.id === Number(id));
         setProduct(found || null);
+        setSelectedImg(0);
+        if (found) {
+          setRelated(
+            data.filter((p) => p.category === found.category && p.id !== found.id).slice(0, 4)
+          );
+        }
       })
       .catch((err) => console.error("Failed to fetch product:", err))
       .finally(() => setLoading(false));
@@ -148,6 +169,10 @@ export default function ProductDetail() {
   }
 
   const inStock = product.stock > 0;
+  const allImages = product.imageUrls?.length > 0
+    ? product.imageUrls
+    : product.imageUrl ? [product.imageUrl] : [];
+  const mainImg = allImages[selectedImg] ?? null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -163,13 +188,32 @@ export default function ProductDetail() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-          {/* Image */}
-          <div className="bg-white border border-gray-200 rounded-2xl aspect-square flex items-center justify-center p-10">
-            <img
-              src={product.imageUrl || undefined}
-              alt={product.name}
-              className="w-full h-full object-contain"
-            />
+          {/* Image gallery */}
+          <div className="flex flex-col gap-3">
+            <div className="bg-white border border-gray-200 rounded-2xl aspect-square flex items-center justify-center p-10">
+              {mainImg ? (
+                <img src={mainImg} alt={product.name} className="w-full h-full object-contain" />
+              ) : (
+                <ImageOff size={48} className="text-gray-300" />
+              )}
+            </div>
+
+            {/* Thumbnail strip */}
+            {allImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {allImages.map((url, i) => (
+                  <button
+                    key={url}
+                    onClick={() => setSelectedImg(i)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-xl border-2 overflow-hidden bg-white transition-colors ${
+                      i === selectedImg ? "border-gray-900" : "border-gray-200 hover:border-gray-400"
+                    }`}
+                  >
+                    <img src={url} alt="" className="w-full h-full object-contain p-1" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Info */}
@@ -200,6 +244,7 @@ export default function ProductDetail() {
 
             <button
               disabled={!inStock}
+              onClick={handleAdd}
               className="flex items-center justify-center gap-2 w-full bg-gray-900 text-white text-sm font-medium py-3 rounded-xl hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ShoppingCart size={16} />
@@ -215,6 +260,18 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
+
+        {/* Related products */}
+        {related.length > 0 && (
+          <div className="mt-14">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5">
+              สินค้าในหมวดเดียวกัน
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {related.map((p) => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

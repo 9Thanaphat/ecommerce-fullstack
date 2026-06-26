@@ -1,95 +1,132 @@
 import { useState } from "react";
+import { Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
   onSwitchToOtp?: (email: string) => void;
 }
 
-export default function RegisterForm({
-  onSwitchToLogin,
-  onSwitchToOtp,
-}: RegisterFormProps) {
+export default function RegisterForm({ onSwitchToLogin, onSwitchToOtp }: RegisterFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [showPw, setShowPw] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const passwordsMatch = password !== "" && password === confirmPassword;
+  const passwordMismatch = confirmPassword !== "" && password !== confirmPassword;
+  const isFormValid = email.trim() !== "" && password.trim() !== "" && passwordsMatch;
 
   const handleRegister = async () => {
     setError(null);
     setIsSubmitting(true);
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${apiUrl}/auth/register`, {
+      const res = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        if (onSwitchToOtp) {
-          onSwitchToOtp(email);
-        }
+      const data = await res.json();
+      if (res.ok && data.success) {
+        onSwitchToOtp?.(email);
       } else {
-        setError(data.message || "Registration failed");
+        setError(data.message || "สมัครสมาชิกไม่สำเร็จ");
       }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      setError("An error occurred during registration. Please try again.");
+    } catch {
+      setError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isPasswordsMatch = password === confirmPassword;
-  const isFormValid =
-    email.trim() !== "" && password.trim() !== "" && isPasswordsMatch;
-
   return (
-    <div className="p-8 flex flex-col gap-y-4 bg-white rounded shadow-md w-full max-w-md mx-auto">
-      <h2>Register</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
-        className="border border-gray-300 rounded py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
-        className="border border-gray-300 rounded py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        className="border border-gray-300 rounded py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <p
-        className={`text-sm ${isPasswordsMatch ? "text-green-500" : "text-red-500"}`}
-      >
-        {isPasswordsMatch ? "" : "Passwords do not match"}
-      </p>
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {isSubmitting && <p className="text-sm text-blue-500">Registering...</p>}
+    <div className="flex flex-col gap-5">
+      {/* Email */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-700">อีเมล</label>
+        <input
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+        />
+      </div>
+
+      {/* Password */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-700">รหัสผ่าน</label>
+        <div className="relative">
+          <input
+            type={showPw ? "text" : "password"}
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPw((v) => !v)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+            tabIndex={-1}
+          >
+            {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Confirm Password */}
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-gray-700">ยืนยันรหัสผ่าน</label>
+        <div className="relative">
+          <input
+            type={showPw ? "text" : "password"}
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && isFormValid && handleRegister()}
+            className={`w-full border rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 transition ${
+              passwordMismatch
+                ? "border-red-300 focus:ring-red-300"
+                : passwordsMatch
+                ? "border-green-300 focus:ring-green-300"
+                : "border-gray-200 focus:ring-gray-900"
+            }`}
+          />
+          {passwordsMatch && (
+            <CheckCircle2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500" />
+          )}
+        </div>
+        {passwordMismatch && (
+          <p className="text-xs text-red-500">รหัสผ่านไม่ตรงกัน</p>
+        )}
+      </div>
+
+      {/* Error */}
+      {error && (
+        <p className="text-sm text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          {error}
+        </p>
+      )}
+
+      {/* Submit */}
       <button
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-        disabled={!isFormValid}
         onClick={handleRegister}
+        disabled={!isFormValid || isSubmitting}
+        className="w-full bg-gray-900 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        Register
+        {isSubmitting && <Loader2 size={15} className="animate-spin" />}
+        สมัครสมาชิก
       </button>
-      <button
-        onClick={onSwitchToLogin}
-        className="text-sm text-blue-500 hover:underline mt-2"
-      >
-        Already have an account? Login
-      </button>
+
+      <p className="text-center text-sm text-gray-500">
+        มีบัญชีอยู่แล้ว?{" "}
+        <button onClick={onSwitchToLogin} className="text-gray-900 font-semibold hover:underline">
+          เข้าสู่ระบบ
+        </button>
+      </p>
     </div>
   );
 }

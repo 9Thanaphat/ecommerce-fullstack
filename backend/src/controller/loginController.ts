@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 type LoginBody = {
   email: string;
   password: string;
+  isRemember: boolean;
 };
 
 type JwtHelper = {
@@ -46,11 +47,12 @@ export const loginUser = async (body: LoginBody, jwt: JwtHelper) => {
       };
     }
 
-    // Generate JWT token with user information
+    const expSeconds = body.isRemember ? 7 * 24 * 60 * 60 : 60 * 60;
     const token = await jwt.sign({
       email: user.email,
       id: user.id,
       role: user.role,
+      exp: Math.floor(Date.now() / 1000) + expSeconds,
     });
 
     return {

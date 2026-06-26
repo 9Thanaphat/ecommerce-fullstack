@@ -1,4 +1,4 @@
-# E-Commerce
+# E-Commerce Fullstack
 
 ![Tech Stack](https://img.shields.io/badge/Bun-1.x-black?logo=bun)
 ![Tech Stack](https://img.shields.io/badge/ElysiaJS-1.x-purple?logo=javascript)
@@ -12,9 +12,7 @@
 
 ## Overview
 
-Full-stack e-commerce application built as a personal learning project to practice modern TypeScript full-stack development. The focus is on production-grade patterns: type-safe database access, secure authentication, and a principled design system — not just getting something to run.
-
-**Design philosophy:** Dark, minimal, precise. The UI is built around a custom design system using OKLCH color tokens, not ad-hoc utility classes.
+Full-stack IT e-commerce application built as a personal learning project to practice modern TypeScript full-stack development. The focus is on production-grade patterns: type-safe database access, secure authentication, real order management, and a clean design system.
 
 ---
 
@@ -28,50 +26,73 @@ Full-stack e-commerce application built as a personal learning project to practi
 | ORM | [Drizzle ORM](https://orm.drizzle.team) |
 | Auth | JWT (HttpOnly cookie) + OTP email verification |
 | Frontend | React 19 + Vite |
-| Styling | TailwindCSS v4 + custom CSS design tokens (OKLCH) |
+| Styling | TailwindCSS v4 |
 | Language | TypeScript (full-stack) |
 | Email | Nodemailer (Gmail SMTP) |
-| Image Storage | Cloudinary |
+| Image Storage | Cloudinary (multiple images per product) |
+| Thai Address | react-thailand-address-typeahead |
 
 ---
 
 ## Features
 
-### ✅ Completed
+### Authentication
+- Email + password registration with OTP verification (Gmail SMTP, 5-minute expiry)
+- Login with JWT in HttpOnly cookie (`secure`, `sameSite: strict`)
+- "Remember me" (7-day vs 1-hour expiry)
+- Change password from profile page
 
-**Authentication**
-- Email + password registration
-- OTP verification via email (Gmail SMTP, 5-minute expiry)
-- Resend OTP flow
-- Login with JWT stored in HttpOnly cookie (secure, sameSite: strict)
-- "Remember me" (7-day cookie expiry)
-- Auth check endpoint — frontend redirects if already authenticated
+### Store (Customer)
+- Product listing with sidebar filters — category, price range slider (auto-adjusts per category), text search
+- Product detail page with component-specific specs and image gallery (multiple images)
+- Related products section (same category)
+- Add to cart with toast notification — no page reload required
+- Cart page — adjust quantity, remove items, proceed to checkout
+- Checkout with saved shipping address (Thai address autocomplete)
+- Mock payment flow → order confirmation
+- Order success page with order number
+- My Orders page — view history, expand to see items, cancel orders (pending/confirmed only)
 
-**Admin Panel**
-- Dashboard with stat cards (total products, orders, revenue, low stock)
-- Product management — full CRUD with modal UI (create, edit, delete)
-- Order management — filter by status, inline status update
-- Responsive sidebar, keyboard-accessible, empty states
-- Refactored to pure Tailwind CSS for cleaner dark mode UI
+### User Profile
+- Name, phone, address (ตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์ via typeahead)
+- All address fields required before saving
+- Change password (verifies current password first)
 
-**Frontend Store**
-- Home page landing with hero section and featured products
-- Product detail page (`/products/:id`) with component-specific specs
-- Sidebar filter (price range, category)
-- Standardized layout with React Router `Outlet`
+### Admin Panel
+- **Dashboard** — real-time stats: total products, total orders, today's orders, revenue (excluding cancelled), low stock count; recent orders table
+- **Products** — full CRUD, multiple image upload per product (up to 8), image thumbnail grid with per-image delete, dynamic attributes per category
+- **Orders** — filter by status, expand to view items + shipping address, inline status update
+- **Users** — list all members, search by name/email, role and verification status badges
+- Role-based access control (RBAC) — admin routes protected server-side
 
-**Backend API & Storage**
-- `GET /products` — list all products
-- `POST /admin/products`, `PUT /admin/products/:id`, `DELETE /admin/products/:id` — Admin product CRUD (with Elysia `t.Object` validation)
-- Cloudinary integration for image uploads
-- Custom dynamic product attributes support
-- `POST /auth/register`, `POST /auth/verify-otp`, `POST /auth/resend-otp`
-- `POST /auth/login`, `GET /auth/check-auth`
-
-### 🚧 In Progress
-
-- [ ] Connect order system to real API (currently using mock data)
-- [ ] Deploy (Vercel + Railway)
+### Backend API
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Register with email + password |
+| POST | `/auth/verify-otp` | Verify OTP |
+| POST | `/auth/login` | Login → set HttpOnly cookie |
+| GET | `/auth/check-auth` | Verify session + return profile |
+| PUT | `/auth/profile` | Update shipping profile |
+| PUT | `/auth/change-password` | Change password |
+| POST | `/auth/logout` | Clear cookie |
+| GET | `/products` | List all products |
+| GET | `/cart` | Get cart items |
+| POST | `/cart` | Add to cart |
+| PUT | `/cart/:productId` | Update quantity |
+| DELETE | `/cart/:productId` | Remove item |
+| DELETE | `/cart` | Clear cart |
+| GET | `/orders/my` | My order history |
+| GET | `/orders/my/:id` | Order items |
+| PATCH | `/orders/my/:id/cancel` | Cancel order + restore stock |
+| POST | `/orders/checkout` | Create order, deduct stock, clear cart |
+| GET | `/admin/dashboard` | Dashboard stats + recent orders |
+| GET | `/admin/users` | List all users |
+| POST | `/admin/products` | Add product (multipart) |
+| PUT | `/admin/products/:id` | Update product |
+| DELETE | `/admin/products/:id` | Delete product |
+| GET | `/admin/orders` | All orders with customer info |
+| GET | `/admin/orders/:id/items` | Order line items |
+| PATCH | `/admin/orders/:id/status` | Update order status |
 
 ---
 
@@ -79,26 +100,57 @@ Full-stack e-commerce application built as a personal learning project to practi
 
 ```text
 ecommerce-fullstack/
-├── DESIGN.md                 # Design system details
-├── PRODUCT.md                # Product specifications
-├── README.md                 # Project documentation
 ├── backend/
-│   ├── src/
-│   │   ├── controller/       # Controllers for business logic
-│   │   ├── db/               # Database schemas and Drizzle client
-│   │   ├── middleware/       # Authentication middlewares
-│   │   ├── routes/           # Elysia API routes
-│   │   └── index.ts          # Entry point (Elysia app)
-│   └── ...config files
+│   └── src/
+│       ├── controller/
+│       │   ├── adminDashboardController.ts
+│       │   ├── adminOrderController.ts
+│       │   ├── loginController.ts
+│       │   ├── orderController.ts
+│       │   ├── productController.ts
+│       │   └── registerController.ts
+│       ├── db/
+│       │   ├── index.ts
+│       │   └── schema.ts
+│       ├── middleware/
+│       │   └── authMiddleware.ts
+│       ├── routes/
+│       │   ├── admin.ts
+│       │   ├── auth.ts
+│       │   ├── cart.ts
+│       │   ├── orders.ts
+│       │   └── products.ts
+│       └── index.ts
 ├── frontend/
-│   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   ├── pages/            # Page layouts and views (including Admin)
-│   │   ├── App.tsx           # React app root
-│   │   ├── index.css         # Design system CSS
-│   │   └── main.tsx          # Vite entry
-│   └── ...config files
-└── docker-compose.yml        # PostgreSQL + Redis
+│   └── src/
+│       ├── components/
+│       │   ├── NavBar.tsx
+│       │   ├── ProductCard.tsx
+│       │   ├── ProductGrid.tsx
+│       │   └── SideBar.tsx
+│       ├── context/
+│       │   └── CartContext.tsx
+│       ├── pages/
+│       │   ├── admin/
+│       │   │   ├── AdminLayout.tsx
+│       │   │   ├── Dashboard.tsx
+│       │   │   ├── OrderManagement.tsx
+│       │   │   ├── ProductManagement.tsx
+│       │   │   └── UserManagement.tsx
+│       │   ├── Auth.tsx
+│       │   ├── Cart.tsx
+│       │   ├── Checkout.tsx
+│       │   ├── Home.tsx
+│       │   ├── MyOrders.tsx
+│       │   ├── OrderSuccess.tsx
+│       │   ├── Product.tsx
+│       │   ├── ProductDetail.tsx
+│       │   └── UserProfile.tsx
+│       ├── types/
+│       │   └── product.ts
+│       ├── App.tsx
+│       └── index.css
+└── docker-compose.yml
 ```
 
 ---
@@ -110,6 +162,7 @@ ecommerce-fullstack/
 - [Bun](https://bun.sh) >= 1.0
 - [Docker](https://www.docker.com) (for PostgreSQL)
 - Gmail account with App Password (for OTP email)
+- [Cloudinary](https://cloudinary.com) account (free tier works)
 
 ### 1. Clone & install
 
@@ -120,26 +173,21 @@ cd ecommerce-fullstack
 
 ### 2. Environment variables
 
-Copy `.env.example` to `.env` and fill in:
-
 ```bash
-cp .env.example .env
+cp backend/.env.example backend/.env
 ```
 
 ```env
-# Backend
 DATABASE_URL=postgresql://user:password@localhost:5432/ecommerce
 JWT_SECRET=your-secret-here
 GMAIL_USER=your@gmail.com
 GMAIL_APP_PASSWORD=your-app-password
 FRONTEND_URL=http://localhost:5173
 
-# Cloudinary (Image Upload)
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# Docker
 DB_USER=user
 DB_PASSWORD=password
 DB_NAME=ecommerce
@@ -156,6 +204,7 @@ docker-compose up -d
 ```bash
 cd backend
 bun install
+bunx drizzle-kit push   # apply schema to DB
 bun run src/index.ts
 ```
 
@@ -165,10 +214,21 @@ Backend runs at `http://localhost:8000`
 
 ```bash
 cd frontend
-bun install
-bun run dev
+npm install
+npm run dev
 ```
 
 Frontend runs at `http://localhost:5173`
 
 ---
+
+## Database Schema
+
+| Table | Description |
+|-------|-------------|
+| `users` | Accounts, profile info, shipping address, role |
+| `otps` | Email verification codes (5-min expiry) |
+| `products` | Products with category attributes, multiple image URLs |
+| `cart_items` | Active cart per user |
+| `orders` | Order records with shipping snapshot |
+| `order_items` | Line items with price snapshot at purchase time |

@@ -1,24 +1,40 @@
-import { ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ShoppingCart, ImageOff } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import type { Product } from "../types/product";
+import { useCart } from "../context/CartContext";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const inStock = product.stock > 0;
+
+  const handleAdd = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const result = await addToCart(product);
+    if (result === "auth_required") navigate("/auth");
+    else if (result === "ok") toast.success("เพิ่มลงตะกร้าแล้ว", { description: product.name });
+    else toast.error("เกิดข้อผิดพลาด กรุณาลองใหม่");
+  };
 
   return (
     <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
 
       {/* Image — click to detail */}
-      <Link to={`/products/${product.id}`} className="relative bg-gray-50 aspect-square overflow-hidden block">
-        <img
-          src={product.imageUrl || undefined}
-          alt={product.name}
-          className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
-        />
+      <Link to={`/products/${product.id}`} className="relative bg-gray-50 aspect-square overflow-hidden flex items-center justify-center block">
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <ImageOff size={32} className="text-gray-300" />
+        )}
         <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-white text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full">
           {product.category}
         </span>
@@ -50,6 +66,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
           <button
             disabled={!inStock}
+            onClick={handleAdd}
             className="flex items-center gap-1.5 text-xs font-medium bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label="Add to cart"
           >

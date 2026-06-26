@@ -1,6 +1,6 @@
 import { db } from "../db";
 import { products, type Product, type InsertProduct } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
@@ -9,53 +9,69 @@ cloudinary.config({
   api_secret: Bun.env.CLOUDINARY_API_SECRET,
 });
 
+const uploadFile = async (file: File): Promise<string> => {
+  const arrayBuffer = await file.arrayBuffer();
+  const base64Data = Buffer.from(arrayBuffer).toString("base64");
+  const fileUri = `data:${file.type};base64,${base64Data}`;
+  const result = await cloudinary.uploader.upload(fileUri, { folder: "ecommerce_products" });
+  return result.secure_url;
+};
+
+const normalizeFiles = (raw: File | File[] | undefined): File[] => {
+  if (!raw) return [];
+  const arr = Array.isArray(raw) ? raw : [raw];
+  return arr.filter((f) => f instanceof File && f.size > 0);
+};
+
+const parseAttributes = (raw: unknown): Record<string, unknown> => {
+  if (typeof raw === "string") return JSON.parse(raw);
+  return (raw as Record<string, unknown>) ?? {};
+};
+
 type AddProductRequest = {
   name: string;
   category: string;
   description: string;
   price: number;
   stock: number;
-  image?: File;
+  images?: File | File[];
   attributes: Record<string, unknown>;
+};
+
+type UpdateProductRequest = {
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  images?: File | File[];
+  keepImageUrls?: string; // JSON stringified string[]
+  attributes?: unknown;
 };
 
 export const getProducts = async () => {
   try {
     const allProducts: Product[] = await db.select().from(products);
     return allProducts;
-  } catch (error) {
+  } catch {
     return { success: false, message: "Failed to fetch products" };
   }
 };
 
 export const addProduct = async ({ body }: { body: AddProductRequest }) => {
   try {
-    const { image, attributes, ...rest } = body; // Extract image and attributes from the body
-    let finalImageUrl = "";
+    const { images, attributes, ...rest } = body;
+    const files = normalizeFiles(images);
 
-    if (image && image.size > 0) {
-      // convert to Base64
-      const arrayBuffer = await image.arrayBuffer();
-      const base64Data = Buffer.from(arrayBuffer).toString("base64");
-      const fileUri = `data:${image.type};base64,${base64Data}`;
-
-      // upload to Cloudinary
-      const uploadResult = await cloudinary.uploader.upload(fileUri, {
-        folder: "ecommerce_products",
-      });
-
-      finalImageUrl = uploadResult.secure_url;
-      console.log("Image URL : " + finalImageUrl)
+    const urls: string[] = [];
+    for (const file of files) {
+      urls.push(await uploadFile(file));
     }
-
-    const parsedAttributes = typeof attributes === 'string' 
-      ? (JSON.parse(attributes) as Record<string, unknown>)
-      : (attributes as Record<string, unknown> ?? {});
 
     await db.insert(products).values({
       ...rest,
-      imageUrl: finalImageUrl,
-      attributes: parsedAttributes ?? {},
+      imageUrl: urls[0] ?? "",
+      imageUrls: urls,
+      attributes: parseAttributes(attributes),
     });
 
     return { success: true, message: "Product added successfully" };
@@ -70,16 +86,35 @@ export const updateProduct = async ({
   body,
 }: {
   params: { id: number };
-  body: Partial<InsertProduct>;
+  body: UpdateProductRequest;
 }) => {
   try {
-    await db.update(products).set(body).where(eq(products.id, params.id));
+    const { images, keepImageUrls, attributes, ...rest } = body;
 
-    return {
-      success: true,
-      message: `Product with ID ${params.id} updated successfully`,
-    };
+    const files = normalizeFiles(images);
+    const newUrls: string[] = [];
+    for (const file of files) {
+      newUrls.push(await uploadFile(file));
+    }
+
+    const updateData: Partial<InsertProduct> = { ...rest };
+
+    // Merge kept existing URLs + newly uploaded URLs
+    const kept: string[] = keepImageUrls !== undefined ? JSON.parse(keepImageUrls) : null;
+    if (kept !== null || newUrls.length > 0) {
+      const finalUrls = [...(kept ?? []), ...newUrls];
+      updateData.imageUrls = finalUrls;
+      updateData.imageUrl = finalUrls[0] ?? "";
+    }
+
+    if (attributes !== undefined) {
+      updateData.attributes = parseAttributes(attributes);
+    }
+
+    await db.update(products).set(updateData).where(eq(products.id, params.id));
+    return { success: true, message: `Product ${params.id} updated successfully` };
   } catch (error) {
+    console.error("updateProduct error:", error);
     return { success: false, message: "Failed to update product" };
   }
 };
@@ -87,12 +122,8 @@ export const updateProduct = async ({
 export const deleteProduct = async ({ params }: { params: { id: number } }) => {
   try {
     await db.delete(products).where(eq(products.id, params.id));
-
-    return {
-      success: true,
-      message: `Product with ID ${params.id} deleted successfully`,
-    };
-  } catch (error) {
+    return { success: true, message: `Product ${params.id} deleted successfully` };
+  } catch {
     return { success: false, message: "Failed to delete product" };
   }
 };
