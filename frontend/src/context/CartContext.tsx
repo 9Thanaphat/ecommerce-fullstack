@@ -56,7 +56,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Fetch auth user once on mount
+  // Fetch auth user once on mount, then fetch cart only if authenticated
   useEffect(() => {
     fetch(`${API}/auth/check-auth`, { credentials: "include" })
       .then((r) => r.json())
@@ -68,12 +68,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
             firstName: data.user.firstName ?? null,
             lastName: data.user.lastName ?? null,
           });
+          fetchCart();
+        } else {
+          setLoading(false);
         }
       })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+      .catch(() => { setLoading(false); });
+  }, [fetchCart]);
 
   const addToCart = async (product: Product): Promise<AddResult> => {
     try {
