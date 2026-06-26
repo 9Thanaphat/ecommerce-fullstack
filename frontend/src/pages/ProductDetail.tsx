@@ -245,7 +245,7 @@ export default function ProductDetail() {
             <button
               disabled={!inStock}
               onClick={handleAdd}
-              className="flex items-center justify-center gap-2 w-full bg-gray-900 text-white text-sm font-medium py-3 rounded-xl hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white text-sm font-medium py-3 rounded-xl hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ShoppingCart size={16} />
               Add to cart

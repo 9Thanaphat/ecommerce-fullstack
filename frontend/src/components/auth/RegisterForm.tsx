@@ -51,7 +51,7 @@ export default function RegisterForm({ onSwitchToLogin, onSwitchToOtp }: Registe
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
 
@@ -64,7 +64,7 @@ export default function RegisterForm({ onSwitchToLogin, onSwitchToOtp }: Registe
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
           <button
             type="button"
@@ -92,7 +92,7 @@ export default function RegisterForm({ onSwitchToLogin, onSwitchToOtp }: Registe
                 ? "border-red-300 focus:ring-red-300"
                 : passwordsMatch
                 ? "border-green-300 focus:ring-green-300"
-                : "border-gray-200 focus:ring-gray-900"
+                : "border-gray-200 focus:ring-blue-500"
             }`}
           />
           {passwordsMatch && (
@@ -115,7 +115,7 @@ export default function RegisterForm({ onSwitchToLogin, onSwitchToOtp }: Registe
       <button
         onClick={handleRegister}
         disabled={!isFormValid || isSubmitting}
-        className="w-full bg-gray-900 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isSubmitting && <Loader2 size={15} className="animate-spin" />}
         สมัครสมาชิก

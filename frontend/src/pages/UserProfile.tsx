@@ -251,7 +251,7 @@ export default function UserProfile() {
 
         {/* Avatar */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 mb-4 flex items-center gap-5">
-          <div className="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
             <span className="text-white text-xl font-semibold">{initials}</span>
           </div>
           <div className="flex-1 min-w-0">
@@ -300,7 +300,7 @@ export default function UserProfile() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex items-center gap-1.5 text-xs text-white bg-gray-900 hover:bg-gray-700 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-all"
+                  className="flex items-center gap-1.5 text-xs text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-3 py-1.5 rounded-lg transition-all"
                 >
                   <Check size={12} /> {saving ? "กำลังบันทึก..." : "บันทึก"}
                 </button>
@@ -458,7 +458,7 @@ export default function UserProfile() {
                 <button
                   onClick={handleChangePassword}
                   disabled={pwSaving}
-                  className="flex items-center gap-1.5 text-xs font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-medium bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
                   {pwSaving ? "กำลังบันทึก..." : "บันทึก"}
                 </button>

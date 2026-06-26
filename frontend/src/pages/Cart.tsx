@@ -1,21 +1,37 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Minus, Plus, X, ImageOff } from "lucide-react";
+import { ShoppingCart, Minus, Plus, X, ImageOff, LogIn } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export default function Cart() {
-  const { items, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart, totalPrice, authUser } = useCart();
   const navigate = useNavigate();
+
+  if (!authUser) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
+        <LogIn size={40} className="text-gray-300" />
+        <p className="text-sm font-medium text-gray-700">กรุณาเข้าสู่ระบบก่อน</p>
+        <p className="text-xs text-gray-400">เพื่อดูสินค้าในตะกร้าของคุณ</p>
+        <button
+          onClick={() => navigate("/auth")}
+          className="mt-2 bg-blue-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          เข้าสู่ระบบ
+        </button>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
         <ShoppingCart size={40} className="text-gray-300" />
-        <p className="text-sm text-gray-400">Your cart is empty</p>
+        <p className="text-sm text-gray-400">ตะกร้าว่างเปล่า</p>
         <Link
           to="/products"
           className="text-sm text-gray-900 font-medium hover:underline underline-offset-4"
         >
-          Browse products
+          เลือกซื้อสินค้า
         </Link>
       </div>
     );
@@ -138,7 +154,7 @@ export default function Cart() {
 
               <button
                 onClick={() => navigate("/checkout")}
-                className="w-full bg-gray-900 text-white text-sm font-medium py-3 rounded-xl hover:bg-gray-700 transition-colors"
+                className="w-full bg-blue-600 text-white text-sm font-medium py-3 rounded-xl hover:bg-blue-700 transition-colors"
               >
                 Checkout
               </button>

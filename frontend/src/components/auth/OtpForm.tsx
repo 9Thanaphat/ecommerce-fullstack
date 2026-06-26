@@ -84,14 +84,14 @@ export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
           onChange={handleOtpChange}
           onKeyDown={(e) => e.key === "Enter" && otp.length === 6 && handleVerify()}
           placeholder="000000"
-          className="w-full border border-gray-200 rounded-lg px-4 py-3 text-center text-2xl font-bold tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+          className="w-full border border-gray-200 rounded-lg px-4 py-3 text-center text-2xl font-bold tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
         <div className="flex justify-between mt-1">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               className={`h-0.5 flex-1 mx-0.5 rounded-full transition-colors ${
-                i < otp.length ? "bg-gray-900" : "bg-gray-200"
+                i < otp.length ? "bg-blue-600" : "bg-gray-200"
               }`}
             />
           ))}
@@ -109,7 +109,7 @@ export default function OtpForm({ email, onSwitchToLogin }: OtpFormProps) {
       <button
         onClick={handleVerify}
         disabled={otp.length !== 6 || isSubmitting}
-        className="w-full bg-gray-900 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isSubmitting && <Loader2 size={15} className="animate-spin" />}
         ยืนยันรหัส OTP

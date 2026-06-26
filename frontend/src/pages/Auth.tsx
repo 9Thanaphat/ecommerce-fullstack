@@ -38,25 +38,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Brand panel — desktop only */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gray-900 text-white flex-col justify-between p-14">
-        <button onClick={() => navigate("/")} className="text-xl font-bold tracking-widest">
-          BOSS IT
-        </button>
-        <p className="text-gray-600 text-xs">© 2025 BOSS IT. All rights reserved.</p>
-      </div>
-
-      {/* Form panel */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
-        {/* Mobile brand */}
-        <button
-          onClick={() => navigate("/")}
-          className="lg:hidden text-lg font-bold tracking-widest mb-10"
-        >
-          BOSS IT
-        </button>
-
+    <div className="min-h-screen flex items-center justify-center bg-white p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">{titles[view].heading}</h1>
@@ -87,8 +69,13 @@ export default function Auth() {
               onSwitchToLogin={() => setView("login")}
             />
           )}
+          <button
+            onClick={() => navigate("/")}
+            className="mt-8 text-sm text-gray-400 hover:text-gray-700 transition-colors"
+          >
+            ← กลับไปหน้าเว็บ
+          </button>
         </div>
-      </div>
     </div>
   );
 }

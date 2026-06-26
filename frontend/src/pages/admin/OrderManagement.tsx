@@ -123,7 +123,7 @@ export default function OrderManagement() {
               onClick={() => setFilter(value)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                 isActive
-                  ? "bg-gray-900 border-gray-900 text-white"
+                  ? "bg-blue-600 border-blue-600 text-white"
                   : "bg-white border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700"
               }`}
             >
@@ -179,7 +179,7 @@ export default function OrderManagement() {
                       <td className="px-5 py-4 text-xs text-gray-400">{fmtDate(order.createdAt)}</td>
                       <td className="px-5 py-4">
                         <select
-                          className="bg-white border border-gray-200 text-gray-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-900 hover:border-gray-300 transition-colors cursor-pointer"
+                          className="bg-white border border-gray-200 text-gray-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-300 transition-colors cursor-pointer"
                           value={order.status}
                           onChange={(e) => updateStatus(order.id, e.target.value as OrderStatus)}
                         >

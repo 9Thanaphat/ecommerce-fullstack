@@ -202,7 +202,7 @@ export default function Checkout() {
               <button
                 onClick={handleConfirm}
                 disabled={!hasAddress || placing}
-                className="w-full bg-gray-900 text-white text-sm font-medium py-3 rounded-xl hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-blue-600 text-white text-sm font-medium py-3 rounded-xl hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {placing ? "กำลังดำเนินการ..." : "Confirm Order (Mock Payment)"}
               </button>

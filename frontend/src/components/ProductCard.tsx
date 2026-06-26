@@ -67,7 +67,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             disabled={!inStock}
             onClick={handleAdd}
-            className="flex items-center gap-1.5 text-xs font-medium bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label="Add to cart"
           >
             <ShoppingCart size={13} />

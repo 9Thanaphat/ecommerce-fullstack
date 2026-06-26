@@ -39,7 +39,7 @@ export default function Home() {
           <div className="flex items-center gap-3 mt-2">
             <Link
               to="/products"
-              className="flex items-center gap-2 bg-gray-900 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 bg-blue-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Shop now <ArrowRight size={15} />
             </Link>

@@ -73,7 +73,7 @@ export default function LoginForm({ onSwitchToRegister, onSwitchToOtp }: LoginFo
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && isFormValid && handleLogin()}
-          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function LoginForm({ onSwitchToRegister, onSwitchToOtp }: LoginFo
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && isFormValid && handleLogin()}
-            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 transition"
+            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
           <button
             type="button"
@@ -113,16 +113,16 @@ export default function LoginForm({ onSwitchToRegister, onSwitchToOtp }: LoginFo
           type="checkbox"
           checked={isRemember}
           onChange={(e) => setIsRemember(e.target.checked)}
-          className="w-4 h-4 accent-gray-900"
+          className="w-4 h-4 accent-blue-600"
         />
-        <span className="text-sm text-gray-600">จำฉันไว้ 7 วัน</span>
+        <span className="text-sm text-gray-600">Remember me</span>
       </label>
 
       {/* Submit */}
       <button
         onClick={handleLogin}
         disabled={!isFormValid || isSubmitting}
-        className="w-full bg-gray-900 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-gray-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-blue-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {isSubmitting && <Loader2 size={15} className="animate-spin" />}
         เข้าสู่ระบบ
@@ -130,7 +130,10 @@ export default function LoginForm({ onSwitchToRegister, onSwitchToOtp }: LoginFo
 
       <p className="text-center text-sm text-gray-500">
         ยังไม่มีบัญชี?{" "}
-        <button onClick={onSwitchToRegister} className="text-gray-900 font-semibold hover:underline">
+        <button
+          onClick={onSwitchToRegister}
+          className="text-gray-900 font-semibold hover:underline"
+        >
           สมัครสมาชิก
         </button>
       </p>

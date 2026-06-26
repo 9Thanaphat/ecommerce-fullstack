@@ -6,7 +6,7 @@ const seedProducts = [
   {
     name: "Intel Core i9-14900K",
     category: "CPU",
-    description: "24-core flagship desktop processor (8P+16E) รองรับ DDR5 และ DDR4 เหมาะสำหรับ gaming และ content creation ระดับสูงสุด",
+    description: "24-core (8P+16E) รองรับทั้ง DDR5 และ DDR4 socket LGA1700",
     price: 19900,
     imageUrl: "",
     stock: 15,
@@ -24,7 +24,7 @@ const seedProducts = [
   {
     name: "Intel Core i7-14700K",
     category: "CPU",
-    description: "20-core processor (8P+12E) สมรรถนะสูงในราคาที่เข้าถึงได้ เหมาะกับ gaming และ multitasking",
+    description: "20-core (8P+12E) socket LGA1700 ราคากลาง boost สูงสุด 5.6 GHz",
     price: 13500,
     imageUrl: "",
     stock: 20,
@@ -42,7 +42,7 @@ const seedProducts = [
   {
     name: "Intel Core i5-14600K",
     category: "CPU",
-    description: "14-core processor (6P+8E) ตัวเลือกยอดนิยมสำหรับ gaming ราคาคุ้มค่า",
+    description: "14-core (6P+8E) socket LGA1700 ขายดีในกลุ่ม mid-range",
     price: 8900,
     imageUrl: "",
     stock: 30,
@@ -60,7 +60,7 @@ const seedProducts = [
   {
     name: "AMD Ryzen 9 7950X",
     category: "CPU",
-    description: "16-core workstation-class processor บน AM5 platform พร้อม DDR5 ประสิทธิภาพสูงสุดสำหรับงาน 3D rendering และ video editing",
+    description: "16-core 32-thread socket AM5 DDR5 TDP 170W สำหรับงาน render และ multitask หนักๆ",
     price: 21500,
     imageUrl: "",
     stock: 10,
@@ -78,7 +78,7 @@ const seedProducts = [
   {
     name: "AMD Ryzen 7 7700X",
     category: "CPU",
-    description: "8-core AM5 processor ประสิทธิภาพดีเยี่ยมสำหรับ gaming และงาน creative ในราคากลาง",
+    description: "8-core 16-thread socket AM5 DDR5 boost สูงสุด 5.4 GHz",
     price: 9500,
     imageUrl: "",
     stock: 25,
@@ -96,7 +96,7 @@ const seedProducts = [
   {
     name: "AMD Ryzen 5 7600X",
     category: "CPU",
-    description: "6-core AM5 processor ตัวเลือกที่ดีที่สุดในราคาประหยัดสำหรับ gaming",
+    description: "6-core 12-thread socket AM5 DDR5 งบไม่สูง boost 5.3 GHz",
     price: 6500,
     imageUrl: "",
     stock: 35,
@@ -116,7 +116,7 @@ const seedProducts = [
   {
     name: "ASUS ROG Maximus Z790 Hero",
     category: "Mainboard",
-    description: "High-end Z790 ATX motherboard สำหรับ Intel LGA1700 พร้อม DDR5, PCIe 5.0 และ Wi-Fi 6E",
+    description: "Z790 ATX socket LGA1700 DDR5 PCIe 5.0 Wi-Fi 6E",
     price: 18500,
     imageUrl: "",
     stock: 8,
@@ -133,7 +133,7 @@ const seedProducts = [
   {
     name: "MSI MAG B760 Tomahawk WiFi",
     category: "Mainboard",
-    description: "B760 ATX motherboard คุ้มค่า รองรับ Intel LGA1700 พร้อม DDR5 และ Wi-Fi 6E เหมาะกับ build งบกลาง",
+    description: "B760 ATX socket LGA1700 DDR5 Wi-Fi 6E งบกลาง",
     price: 5900,
     imageUrl: "",
     stock: 20,
@@ -150,7 +150,7 @@ const seedProducts = [
   {
     name: "ASUS ROG Crosshair X670E Hero",
     category: "Mainboard",
-    description: "Flagship X670E ATX motherboard สำหรับ AMD AM5 พร้อม PCIe 5.0 x16, DDR5 และ Wi-Fi 6E",
+    description: "X670E ATX socket AM5 DDR5 PCIe 5.0 Wi-Fi 6E",
     price: 19900,
     imageUrl: "",
     stock: 6,
@@ -167,7 +167,7 @@ const seedProducts = [
   {
     name: "MSI PRO B650-P WiFi",
     category: "Mainboard",
-    description: "B650 ATX motherboard ราคาประหยัดสำหรับ AMD AM5 รองรับ DDR5 และ Wi-Fi 6",
+    description: "B650 ATX socket AM5 DDR5 Wi-Fi 6 ราคาประหยัด",
     price: 4900,
     imageUrl: "",
     stock: 22,
@@ -186,7 +186,7 @@ const seedProducts = [
   {
     name: "G.Skill Trident Z5 RGB DDR5-6000 32GB (2x16GB)",
     category: "RAM",
-    description: "High-performance DDR5 kit ความเร็ว 6000 MHz CL30 พร้อม RGB lighting สวยงาม",
+    description: "DDR5-6000 CL30 2x16GB มี RGB",
     price: 5200,
     imageUrl: "",
     stock: 18,
@@ -202,7 +202,7 @@ const seedProducts = [
   {
     name: "Corsair Vengeance DDR5-5600 32GB (2x16GB)",
     category: "RAM",
-    description: "Reliable DDR5 kit ความเร็ว 5600 MHz เหมาะสำหรับ AM5 และ LGA1700 platform",
+    description: "DDR5-5600 CL36 2x16GB ใช้ได้กับ AM5 และ LGA1700",
     price: 3900,
     imageUrl: "",
     stock: 25,
@@ -218,7 +218,7 @@ const seedProducts = [
   {
     name: "Kingston Fury Beast DDR4-3200 16GB (2x8GB)",
     category: "RAM",
-    description: "Budget-friendly DDR4 kit ความเร็ว 3200 MHz เหมาะสำหรับ platform LGA1700 ที่ยังใช้ DDR4",
+    description: "DDR4-3200 CL16 2x8GB สำหรับบอร์ด LGA1700 ที่ใช้ DDR4",
     price: 1590,
     imageUrl: "",
     stock: 40,
@@ -236,7 +236,7 @@ const seedProducts = [
   {
     name: "ASUS ROG Strix GeForce RTX 4090 OC 24GB",
     category: "GPU",
-    description: "การ์ดจอ flagship ประสิทธิภาพสูงสุด เหมาะสำหรับ 4K gaming, 3D rendering และ AI workloads",
+    description: "RTX 4090 24GB GDDR6X สำหรับ 4K และงาน render ต้องการ PSU 850W ขึ้นไป",
     price: 69900,
     imageUrl: "",
     stock: 5,
@@ -251,7 +251,7 @@ const seedProducts = [
   {
     name: "MSI Gaming X Slim GeForce RTX 4080 Super 16GB",
     category: "GPU",
-    description: "High-end GPU สำหรับ 4K gaming ราคาสมเหตุสมผลกว่า RTX 4090 ประสิทธิภาพยอดเยี่ยม",
+    description: "RTX 4080 Super 16GB GDDR6X ยาว 337mm ต้องการ PSU 750W",
     price: 39900,
     imageUrl: "",
     stock: 8,
@@ -266,7 +266,7 @@ const seedProducts = [
   {
     name: "Gigabyte Eagle GeForce RTX 4070 Ti Super 16GB",
     category: "GPU",
-    description: "Mid-to-high range GPU เหมาะสำหรับ 1440p และ 4K gaming ในราคาที่เข้าถึงได้",
+    description: "RTX 4070 Ti Super 16GB GDDR6X ยาว 300mm ต้องการ PSU 700W",
     price: 27500,
     imageUrl: "",
     stock: 12,
@@ -281,7 +281,7 @@ const seedProducts = [
   {
     name: "Sapphire Nitro+ AMD Radeon RX 7900 XTX 24GB",
     category: "GPU",
-    description: "AMD flagship GPU สำหรับ 4K gaming พร้อม 24GB GDDR6 memory ประสิทธิภาพแข่งขันกับ RTX 4080",
+    description: "RX 7900 XTX 24GB GDDR6 ยาว 336mm ต้องการ PSU 800W",
     price: 35900,
     imageUrl: "",
     stock: 7,
@@ -296,7 +296,7 @@ const seedProducts = [
   {
     name: "ASUS Dual GeForce RTX 4060 8GB OC",
     category: "GPU",
-    description: "Entry-level RTX 4060 เหมาะสำหรับ 1080p gaming ประหยัดพลังงาน TDP เพียง 115W",
+    description: "RTX 4060 8GB GDDR6 TDP 115W ยาว 240mm ต้องการ PSU 550W",
     price: 10900,
     imageUrl: "",
     stock: 20,
@@ -313,7 +313,7 @@ const seedProducts = [
   {
     name: "Samsung 990 Pro 2TB NVMe PCIe 4.0",
     category: "SSD",
-    description: "High-performance M.2 SSD ความเร็วอ่านสูงสุด 7,450 MB/s เหมาะสำหรับ gaming และ content creation",
+    description: "M.2 2280 PCIe 4.0 x4 อ่าน 7,450 / เขียน 6,900 MB/s",
     price: 4290,
     imageUrl: "",
     stock: 30,
@@ -329,7 +329,7 @@ const seedProducts = [
   {
     name: "WD Black SN850X 1TB NVMe PCIe 4.0",
     category: "SSD",
-    description: "Gaming-optimized NVMe SSD ความเร็วอ่านสูงสุด 7,300 MB/s พร้อม Game Mode 2.0",
+    description: "M.2 2280 PCIe 4.0 x4 อ่าน 7,300 / เขียน 6,300 MB/s มี Game Mode 2.0",
     price: 2490,
     imageUrl: "",
     stock: 35,
@@ -345,7 +345,7 @@ const seedProducts = [
   {
     name: "Seagate FireCuda 530 2TB NVMe PCIe 4.0",
     category: "SSD",
-    description: "High-endurance NVMe SSD ความเร็วสูงสุด 7,300 MB/s เหมาะสำหรับ workstation และ gaming",
+    description: "M.2 2280 PCIe 4.0 x4 อ่าน 7,300 / เขียน 6,900 MB/s TBW สูง",
     price: 4590,
     imageUrl: "",
     stock: 15,
@@ -361,7 +361,7 @@ const seedProducts = [
   {
     name: "Crucial T705 1TB NVMe PCIe 5.0",
     category: "SSD",
-    description: "PCIe 5.0 SSD รุ่นใหม่ล่าสุด ความเร็วอ่านสูงสุดถึง 13,600 MB/s",
+    description: "M.2 2280 PCIe 5.0 x4 อ่าน 13,600 / เขียน 10,200 MB/s",
     price: 3990,
     imageUrl: "",
     stock: 10,
@@ -379,7 +379,7 @@ const seedProducts = [
   {
     name: "Corsair HX1000i 1000W 80+ Platinum",
     category: "PSU",
-    description: "Fully modular 1000W PSU ประสิทธิภาพ 80+ Platinum เหมาะสำหรับ high-end build พร้อม RTX 4090",
+    description: "1000W 80+ Platinum Full Modular ATX",
     price: 7900,
     imageUrl: "",
     stock: 12,
@@ -394,7 +394,7 @@ const seedProducts = [
   {
     name: "be quiet! Dark Power 13 850W 80+ Titanium",
     category: "PSU",
-    description: "Ultra-efficient 850W Titanium PSU เงียบเป็นพิเศษ เหมาะสำหรับ silent build คุณภาพสูง",
+    description: "850W 80+ Titanium Full Modular ATX เสียงเงียบมาก",
     price: 8500,
     imageUrl: "",
     stock: 8,
@@ -409,7 +409,7 @@ const seedProducts = [
   {
     name: "Seasonic Focus GX-750 750W 80+ Gold",
     category: "PSU",
-    description: "Fully modular 750W Gold PSU คุณภาพดี เหมาะสำหรับ mid-range build พร้อม RTX 4070",
+    description: "750W 80+ Gold Full Modular ATX",
     price: 4200,
     imageUrl: "",
     stock: 20,
@@ -424,7 +424,7 @@ const seedProducts = [
   {
     name: "Cooler Master MWE 650 Bronze V2 650W",
     category: "PSU",
-    description: "Semi-modular 650W PSU ราคาประหยัด เหมาะสำหรับ budget build ที่ใช้ RTX 4060 หรือต่ำกว่า",
+    description: "650W 80+ Bronze Semi Modular ATX ราคาประหยัด",
     price: 1990,
     imageUrl: "",
     stock: 30,
@@ -441,7 +441,7 @@ const seedProducts = [
   {
     name: "Lian Li PC-O11 Dynamic EVO",
     category: "Case",
-    description: "Mid Tower case ยอดนิยม กระจกใส 3 ด้าน รองรับ ATX/Micro-ATX/Mini-ITX และ 420mm radiator",
+    description: "Mid Tower กระจกใส 3 ด้าน รองรับ ATX/mATX/ITX และ radiator 420mm",
     price: 5500,
     imageUrl: "",
     stock: 15,
@@ -456,7 +456,7 @@ const seedProducts = [
   {
     name: "Fractal Design Meshify 2 XL",
     category: "Case",
-    description: "Full Tower case airflow ดีเยี่ยม mesh front panel รองรับ E-ATX และ radiator ขนาด 420mm",
+    description: "Full Tower mesh front รองรับ E-ATX และ radiator 420mm GPU ยาวสุด 467mm",
     price: 6900,
     imageUrl: "",
     stock: 8,
@@ -471,7 +471,7 @@ const seedProducts = [
   {
     name: "NZXT H510 Flow",
     category: "Case",
-    description: "Compact Mid Tower case ดีไซน์สวยงาม airflow ดี เหมาะสำหรับ build ขนาดกะทัดรัด",
+    description: "Mid Tower รองรับ ATX/mATX/ITX GPU ยาวสุด 381mm",
     price: 3200,
     imageUrl: "",
     stock: 18,
@@ -488,7 +488,7 @@ const seedProducts = [
   {
     name: "Noctua NH-D15 chromax.black",
     category: "CPU Cooler",
-    description: "Dual-tower air cooler ประสิทธิภาพสูงสุดในบรรดา air cooler เงียบมาก รองรับ LGA1700 และ AM5",
+    description: "Dual tower air cooler สูง 165mm รองรับ LGA1700 และ AM5",
     price: 3200,
     imageUrl: "",
     stock: 15,
@@ -502,7 +502,7 @@ const seedProducts = [
   {
     name: "ARCTIC Liquid Freezer III 360",
     category: "CPU Cooler",
-    description: "360mm AIO liquid cooler ประสิทธิภาพเยี่ยมในราคาคุ้มค่า เหมาะสำหรับ i9/Ryzen 9",
+    description: "AIO 360mm รองรับ LGA1700 และ AM5",
     price: 3500,
     imageUrl: "",
     stock: 12,
@@ -516,7 +516,7 @@ const seedProducts = [
   {
     name: "Corsair iCUE H150i Elite LCD 360mm",
     category: "CPU Cooler",
-    description: "Premium 360mm AIO พร้อม LCD display แสดงอุณหภูมิ ดีไซน์สวยงาม เหมาะสำหรับ showcase build",
+    description: "AIO 360mm มี LCD display แสดงอุณหภูมิ รองรับ LGA1700 และ AM5",
     price: 7900,
     imageUrl: "",
     stock: 8,
@@ -530,7 +530,7 @@ const seedProducts = [
   {
     name: "DeepCool AK620 Zero Dark",
     category: "CPU Cooler",
-    description: "Dual-tower air cooler ประสิทธิภาพสูง ดีไซน์ all-black เงียบและเย็นเหมาะกับ mid-range build",
+    description: "Dual tower air cooler สูง 160mm all-black รองรับ LGA1700 และ AM5",
     price: 1890,
     imageUrl: "",
     stock: 20,

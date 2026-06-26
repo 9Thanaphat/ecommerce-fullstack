@@ -46,7 +46,7 @@ export default function OrderSuccess() {
         <div className="flex flex-col gap-3">
           <Link
             to="/"
-            className="w-full bg-gray-900 text-white text-sm font-medium py-3 rounded-xl hover:bg-gray-700 transition-colors text-center"
+            className="w-full bg-blue-600 text-white text-sm font-medium py-3 rounded-xl hover:bg-blue-700 transition-colors text-center"
           >
             กลับหน้าหลัก
           </Link>

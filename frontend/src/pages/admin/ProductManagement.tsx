@@ -31,7 +31,7 @@ function emptyForm(): ProductForm {
 }
 
 // ─── Shared input class ───────────────────────────────────────
-const inp = "bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 hover:border-gray-300 transition-colors";
+const inp = "bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-gray-300 transition-colors";
 const lbl = "text-xs font-medium text-gray-500";
 
 // ─── Image Upload Section ─────────────────────────────────────
@@ -136,7 +136,7 @@ function AttributesForm({ attributes, onChange }: { attributes: ProductAttribute
     <div className="flex flex-col gap-1.5" key={key}>
       <label className={lbl}>{label}</label>
       <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
-        <input type="checkbox" checked={value} onChange={(e) => set(key, e.target.checked)} className="accent-gray-900 w-4 h-4 cursor-pointer" />
+        <input type="checkbox" checked={value} onChange={(e) => set(key, e.target.checked)} className="accent-blue-600 w-4 h-4 cursor-pointer" />
         {value ? "Yes" : "No"}
       </label>
     </div>
@@ -344,7 +344,7 @@ export default function ProductManagement() {
           <p className="text-sm text-gray-400 mt-0.5">{products.length} item{products.length !== 1 ? "s" : ""} in catalogue</p>
         </div>
         <button onClick={openCreate}
-          className="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           <Plus size={14} /> Add product
         </button>
       </div>
@@ -361,7 +361,7 @@ export default function ProductManagement() {
             <p className="text-sm font-medium text-gray-500 mb-1">No products yet</p>
             <p className="text-xs text-gray-400 mb-6">Add your first product to start building the catalogue.</p>
             <button onClick={openCreate}
-              className="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
               <Plus size={14} /> Add product
             </button>
           </div>
@@ -481,7 +481,7 @@ export default function ProductManagement() {
                 Cancel
               </button>
               <button onClick={handleSave} disabled={!form.name.trim() || submitting}
-                className="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40">
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-40">
                 {submitting ? "Saving…" : modal.mode === "create" ? "Add product" : "Save changes"}
               </button>
             </div>
