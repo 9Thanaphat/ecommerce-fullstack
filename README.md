@@ -28,8 +28,8 @@ Full-stack IT e-commerce application built as a personal learning project to pra
 | Frontend | React 19 + Vite |
 | Styling | TailwindCSS v4 |
 | Language | TypeScript (full-stack) |
-| Email | Nodemailer (Gmail SMTP) |
-| Image Storage | Cloudinary (multiple images per product) |
+| Email | Mailersend |
+| Image Storage | Cloudinary |
 | Thai Address | react-thailand-address-typeahead |
 
 ---
