@@ -11,7 +11,9 @@ export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "All">("All");
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | "All">(
+    (searchParams.get("category") as ProductCategory) ?? "All"
+  );
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [sortOrder, setSortOrder] = useState<SortOrder>("none");
 

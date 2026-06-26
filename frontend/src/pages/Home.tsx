@@ -5,12 +5,12 @@ import { useState, useEffect } from "react";
 import type { Product } from "../types/product";
 
 const categories = [
-  { label: "CPU",       icon: Cpu,          to: "/products" },
-  { label: "Mainboard", icon: CircuitBoard,  to: "/products" },
-  { label: "GPU",       icon: Monitor,       to: "/products" },
-  { label: "RAM",       icon: MemoryStick,   to: "/products" },
-  { label: "SSD",       icon: HardDrive,     to: "/products" },
-  { label: "PSU",       icon: Zap,           to: "/products" },
+  { label: "CPU",       icon: Cpu,          to: "/products?category=CPU" },
+  { label: "Mainboard", icon: CircuitBoard,  to: "/products?category=Mainboard" },
+  { label: "GPU",       icon: Monitor,       to: "/products?category=GPU" },
+  { label: "RAM",       icon: MemoryStick,   to: "/products?category=RAM" },
+  { label: "SSD",       icon: HardDrive,     to: "/products?category=SSD" },
+  { label: "PSU",       icon: Zap,           to: "/products?category=PSU" },
 ];
 
 export default function Home() {
