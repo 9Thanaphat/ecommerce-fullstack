@@ -2,18 +2,11 @@ import { Elysia, t } from "elysia";
 import { otps, users } from "../db/schema";
 import { db } from "../db";
 import { eq, and } from "drizzle-orm";
-import nodemailer from "nodemailer";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
-// Configure nodemailer transporter for Gmail
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+const mailerSend = new MailerSend({ apiKey: process.env.MAILERSEND_API_KEY ?? "" });
+const FROM_EMAIL = process.env.MAILERSEND_FROM_EMAIL ?? "";
+const FROM_NAME = "BOSS IT";
 
 type RegisterBody = {
   email: string;
@@ -77,22 +70,24 @@ export const registerUser = async (body: RegisterBody) => {
       expiresAt: expireTime,
     });
 
-    // Send OTP email non-blocking
-    transporter.sendMail({
-      from: `"BOSS IT" <${process.env.GMAIL_USER}>`,
-      to: body.email,
-      subject: "รหัส OTP สำหรับยืนยันบัญชี",
-      html: `
-        <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
-          <h2 style="color: #000;">ยืนยันบัญชี BOSS IT</h2>
-          <p>รหัส OTP ของคุณคือ:</p>
-          <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-            <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
-          </div>
-          <p style="color: #666; font-size: 14px;">รหัสนี้มีอายุ 5 นาที</p>
+    const otpHtml = `
+      <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
+        <h2 style="color: #000;">ยืนยันบัญชี BOSS IT</h2>
+        <p>รหัส OTP ของคุณคือ:</p>
+        <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
         </div>
-      `,
-    }).catch((err) => console.error("OTP email failed:", err));
+        <p style="color: #666; font-size: 14px;">รหัสนี้มีอายุ 5 นาที</p>
+      </div>
+    `;
+
+    mailerSend.email.send(
+      new EmailParams()
+        .setFrom(new Sender(FROM_EMAIL, FROM_NAME))
+        .setTo([new Recipient(body.email)])
+        .setSubject("รหัส OTP สำหรับยืนยันบัญชี")
+        .setHtml(otpHtml)
+    ).catch((err: unknown) => console.error("OTP email failed:", err));
 
     return {
       success: true,
@@ -185,21 +180,24 @@ export const resendOtp = async (body: ResendOtpBody) => {
 
     console.log(otpCode);
 
-    transporter.sendMail({
-      from: `"BOSS IT" <${process.env.GMAIL_USER}>`,
-      to: body.email,
-      subject: "รหัส OTP สำหรับยืนยันบัญชี",
-      html: `
-        <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
-          <h2 style="color: #000;">ยืนยันบัญชี BOSS IT</h2>
-          <p>รหัส OTP ของคุณคือ:</p>
-          <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-            <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
-          </div>
-          <p style="color: #666; font-size: 14px;">รหัสนี้มีอายุ 5 นาที</p>
+    const otpHtml = `
+      <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
+        <h2 style="color: #000;">ยืนยันบัญชี BOSS IT</h2>
+        <p>รหัส OTP ของคุณคือ:</p>
+        <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
         </div>
-      `,
-    }).catch((err) => console.error("OTP email failed:", err));
+        <p style="color: #666; font-size: 14px;">รหัสนี้มีอายุ 5 นาที</p>
+      </div>
+    `;
+
+    mailerSend.email.send(
+      new EmailParams()
+        .setFrom(new Sender(FROM_EMAIL, FROM_NAME))
+        .setTo([new Recipient(body.email)])
+        .setSubject("รหัส OTP สำหรับยืนยันบัญชี")
+        .setHtml(otpHtml)
+    ).catch((err: unknown) => console.error("OTP email failed:", err));
 
     return {
       success: true,

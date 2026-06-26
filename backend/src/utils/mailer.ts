@@ -1,14 +1,8 @@
-import nodemailer from "nodemailer";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+const mailerSend = new MailerSend({ apiKey: process.env.MAILERSEND_API_KEY ?? "" });
+const FROM_EMAIL = process.env.MAILERSEND_FROM_EMAIL ?? "";
+const FROM_NAME = "BOSS IT";
 
 const fmtOrderId = (id: number) => `ORD-${id.toString().padStart(6, "0")}`;
 
@@ -108,10 +102,11 @@ export const sendOrderConfirmation = async (params: SendOrderConfirmationParams)
     </div>
   `;
 
-  await transporter.sendMail({
-    from: `"BOSS IT" <${process.env.GMAIL_USER}>`,
-    to,
-    subject: `ยืนยันคำสั่งซื้อ ${fmtOrderId(orderId)}`,
-    html,
-  });
+  const emailParams = new EmailParams()
+    .setFrom(new Sender(FROM_EMAIL, FROM_NAME))
+    .setTo([new Recipient(to)])
+    .setSubject(`ยืนยันคำสั่งซื้อ ${fmtOrderId(orderId)}`)
+    .setHtml(html);
+
+  await mailerSend.email.send(emailParams);
 };
