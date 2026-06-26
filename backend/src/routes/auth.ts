@@ -66,7 +66,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
           value: result.token,
           httpOnly: true,
           secure: true,
-          sameSite: "strict",
+          sameSite: "none",
         };
         if (body.isRemember) {
           cookieOptions.maxAge = 7 * 24 * 60 * 60; // 7 days
@@ -196,7 +196,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
       value: "",
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 0,
     });
     return { success: true, message: "Logged out successfully" };
