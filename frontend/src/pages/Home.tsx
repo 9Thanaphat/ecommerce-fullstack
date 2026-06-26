@@ -19,7 +19,7 @@ export default function Home() {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => res.json())
-      .then((data: Product[]) => setFeatured(data.slice(0, 4)))
+      .then((data) => setFeatured((data.products ?? data).slice(0, 4)))
       .catch((err) => console.error("Failed to fetch featured products:", err));
   }, []);
 
