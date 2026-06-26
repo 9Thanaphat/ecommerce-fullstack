@@ -75,30 +75,26 @@ export const registerUser = async (body: RegisterBody) => {
       expiresAt: expireTime,
     });
 
-    // Send OTP email to the user
-    const mailOptions = {
-      from: `"Ecommerce" <${process.env.GMAIL_USER}>`,
+    // Send OTP email non-blocking
+    transporter.sendMail({
+      from: `"BOSS IT" <${process.env.GMAIL_USER}>`,
       to: body.email,
-      subject: "Your OTP Verification Code",
+      subject: "รหัส OTP สำหรับยืนยันบัญชี",
       html: `
-          <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
-            <h2 style="color: #000;">Welcome!</h2>
-            <p>Your One-Time Password (OTP) for login is:</p>
-            <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-              <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
-            </div>
-            <p style="color: #666; font-size: 14px;">This code is valid for the next 5 minutes. Please do not share this code with anyone.</p>
+        <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
+          <h2 style="color: #000;">ยืนยันบัญชี BOSS IT</h2>
+          <p>รหัส OTP ของคุณคือ:</p>
+          <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+            <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
           </div>
-        `,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Message sent: %s", info.messageId);
+          <p style="color: #666; font-size: 14px;">รหัสนี้มีอายุ 5 นาที</p>
+        </div>
+      `,
+    }).catch((err) => console.error("OTP email failed:", err));
 
     return {
       success: true,
-      message:
-        "User registered successfully! Please check your email for the OTP code.",
+      message: "User registered successfully! Please check your email for the OTP code.",
     };
   } catch (error) {
     console.error("Error registering user:", error);
@@ -187,30 +183,25 @@ export const resendOtp = async (body: ResendOtpBody) => {
 
     console.log(otpCode);
 
-    // Send OTP email to the user
-    const mailOptions = {
-      from: `"Ecommerce" <${process.env.GMAIL_USER}>`,
+    transporter.sendMail({
+      from: `"BOSS IT" <${process.env.GMAIL_USER}>`,
       to: body.email,
-      subject: "Your OTP Verification Code",
+      subject: "รหัส OTP สำหรับยืนยันบัญชี",
       html: `
-          <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
-            <h2 style="color: #000;">Welcome!</h2>
-            <p>Your One-Time Password (OTP) for login is:</p>
-            <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-              <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
-            </div>
-            <p style="color: #666; font-size: 14px;">This code is valid for the next 5 minutes. Please do not share this code with anyone.</p>
+        <div style="font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; color: #333;">
+          <h2 style="color: #000;">ยืนยันบัญชี BOSS IT</h2>
+          <p>รหัส OTP ของคุณคือ:</p>
+          <div style="background-color: #f4f4f4; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+            <h1 style="color: #000; letter-spacing: 5px; margin: 0;">${otpCode}</h1>
           </div>
-        `,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Message sent: %s", info.messageId);
+          <p style="color: #666; font-size: 14px;">รหัสนี้มีอายุ 5 นาที</p>
+        </div>
+      `,
+    }).catch((err) => console.error("OTP email failed:", err));
 
     return {
       success: true,
-      message:
-        "OTP resend successfully! Please check your email for the new OTP code.",
+      message: "OTP resend successfully! Please check your email for the new OTP code.",
     };
   } catch (error) {
     console.error("Error resending OTP:", error);
