@@ -41,21 +41,23 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Body */}
-      <div className="p-4 flex flex-col gap-3">
-        <Link
-          to={`/products/${product.id}`}
-          className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-gray-600 transition-colors"
-        >
-          {product.name}
-        </Link>
+      <div className="p-4 flex flex-col flex-1">
+        <div className="flex-1 flex flex-col gap-2 mb-3">
+          <Link
+            to={`/products/${product.id}`}
+            className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 hover:text-gray-600 transition-colors"
+          >
+            {product.name}
+          </Link>
 
-        {product.description && (
-          <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
-            {product.description}
-          </p>
-        )}
+          {product.description && (
+            <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
+              {product.description}
+            </p>
+          )}
+        </div>
 
-        <div className="flex items-center justify-between mt-auto pt-1">
+        <div className="flex items-center justify-between pt-1">
           <div>
             <span className="text-base font-bold text-gray-900">
               ฿{product.price.toLocaleString()}
