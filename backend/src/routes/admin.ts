@@ -147,7 +147,7 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
           price: t.Optional(t.Numeric()),
           stock: t.Optional(t.Numeric()),
           images: t.Optional(t.Files()),
-          keepImageUrls: t.Optional(t.String()),
+          keepImageUrls: t.Optional(t.Union([t.String(), t.Array(t.String())])),
           attributes: t.Optional(t.Any()),
         }),
       })

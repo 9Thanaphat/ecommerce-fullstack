@@ -44,7 +44,7 @@ type UpdateProductRequest = {
   price?: number;
   stock?: number;
   images?: File | File[];
-  keepImageUrls?: string; // JSON stringified string[]
+  keepImageUrls?: string | string[];
   attributes?: unknown;
 };
 
@@ -100,7 +100,9 @@ export const updateProduct = async ({
     const updateData: Partial<InsertProduct> = { ...rest };
 
     // Merge kept existing URLs + newly uploaded URLs
-    const kept: string[] = keepImageUrls !== undefined ? JSON.parse(keepImageUrls) : null;
+    const kept: string[] | null = keepImageUrls !== undefined
+      ? (Array.isArray(keepImageUrls) ? keepImageUrls : JSON.parse(keepImageUrls))
+      : null;
     if (kept !== null || newUrls.length > 0) {
       const finalUrls = [...(kept ?? []), ...newUrls];
       updateData.imageUrls = finalUrls;
