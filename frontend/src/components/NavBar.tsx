@@ -13,12 +13,12 @@ export default function NavBar() {
   const { totalItems, authUser } = useCart();
 
   return (
-    <nav className="sticky top-0 z-50 h-14 px-8 md:px-16 bg-gray-900 flex items-center gap-6 w-full">
+    <nav className="sticky top-0 z-50 h-14 px-8 md:px-16 bg-black flex items-center gap-6 w-full">
       <h1
         className="text-xl font-bold text-white cursor-pointer flex-shrink-0"
         onClick={() => navigate("/")}
       >
-        BOSS IT
+        Boss IT Store
       </h1>
 
       <div className="flex items-center ml-auto gap-6">
