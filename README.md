@@ -8,6 +8,8 @@
 ![Tech Stack](https://img.shields.io/badge/Drizzle_ORM-darkgreen)
 ![Status](https://img.shields.io/badge/Status-In_Development-orange)
 
+**Live Demo:** [boss-it-ecommerce.vercel.app](https://boss-it-ecommerce.vercel.app)
+
 ---
 
 ## Overview
@@ -232,3 +234,74 @@ Frontend runs at `http://localhost:5173`
 | `cart_items` | Active cart per user |
 | `orders` | Order records with shipping snapshot |
 | `order_items` | Line items with price snapshot at purchase time |
+
+```mermaid
+erDiagram
+    users {
+        serial id PK
+        text email UK
+        text password_hash
+        text role
+        boolean is_verified
+        text first_name
+        text last_name
+        text phone
+        text address
+        text subdistrict
+        text city
+        text province
+        text postal_code
+    }
+
+    otps {
+        serial id PK
+        text email
+        text otp
+        timestamp expires_at
+    }
+
+    products {
+        serial id PK
+        text name
+        text category
+        integer price
+        integer stock
+        jsonb image_urls
+        jsonb attributes
+    }
+
+    cart_items {
+        serial id PK
+        integer user_id FK
+        integer product_id FK
+        integer quantity
+    }
+
+    orders {
+        serial id PK
+        integer user_id FK
+        integer total_amount
+        text status
+        text shipping_first_name
+        text shipping_last_name
+        text shipping_address
+        text shipping_province
+        text shipping_postal_code
+    }
+
+    order_items {
+        serial id PK
+        integer order_id FK
+        integer product_id
+        text product_name
+        integer price
+        integer quantity
+    }
+
+    users ||--o{ cart_items : "has"
+    products ||--o{ cart_items : "in"
+    users ||--o{ orders : "places"
+    orders ||--|{ order_items : "contains"
+    products ||--o{ order_items : "snapshot ref"
+    users ||--o{ otps : "verifies via"
+```
