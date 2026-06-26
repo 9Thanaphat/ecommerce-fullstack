@@ -22,12 +22,12 @@ Full-stack IT e-commerce application built as a personal learning project to pra
 |-------|-----------|
 | Runtime | [Bun](https://bun.sh) |
 | Backend Framework | [ElysiaJS](https://elysiajs.com) |
-| Database | PostgreSQL 16 (Docker) |
+| Database | PostgreSQL |
 | ORM | [Drizzle ORM](https://orm.drizzle.team) |
 | Auth | JWT (HttpOnly cookie) + OTP email verification |
 | Frontend | React 19 + Vite |
 | Styling | TailwindCSS v4 |
-| Language | TypeScript (full-stack) |
+| Language | TypeScript |
 | Email | Mailersend |
 | Image Storage | Cloudinary |
 | Thai Address | react-thailand-address-typeahead |
