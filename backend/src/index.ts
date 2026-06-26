@@ -24,7 +24,7 @@ const app = new Elysia()
   .use(adminRoutes)
   .use(cartRoutes)
   .use(orderRoutes)
-  .listen(8000);
+  .listen(Bun.env.PORT ?? 8000);
 
 console.log(app.routes.map(r => `${r.method} ${r.path}`));
 
